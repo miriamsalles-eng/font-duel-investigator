@@ -5,6 +5,40 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
+ * Duelo das Fontes — paleta do PRD
+ * Fundo claro #F7F4EE · Azul #4D86C6 · Teal #49A39A · Amarelo #F2C94C
+ * Coral #E97A68 · Roxo #8B7AC9 · Cinza azulado #5F6B7A · Grafite #2F3440
+ * Nenhuma cor sinaliza certo/errado.
+ */
+@theme inline {
+  --color-areia: var(--areia);
+  --color-azul: var(--azul);
+  --color-azul-claro: var(--azul-claro);
+  --color-teal: var(--teal);
+  --color-teal-claro: var(--teal-claro);
+  --color-amarelo: var(--amarelo);
+  --color-coral: var(--coral);
+  --color-roxo: var(--roxo);
+  --color-cinza-azulado: var(--cinza-azulado);
+  --color-grafite: var(--grafite);
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --areia: oklch(0.965 0.008 85);
+  --azul: oklch(0.62 0.11 253);
+  --azul-claro: oklch(0.93 0.03 253);
+  --teal: oklch(0.635 0.077 187);
+  --teal-claro: oklch(0.94 0.025 187);
+  --amarelo: oklch(0.845 0.135 88);
+  --coral: oklch(0.7 0.115 30);
+  --roxo: oklch(0.635 0.105 294);
+  --cinza-azulado: oklch(0.51 0.03 250);
+  --grafite: oklch(0.31 0.02 265);
+}
+
+
+/*
  * Design system definition.
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
@@ -62,26 +96,27 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --radius: 0.875rem;
+  --background: oklch(0.965 0.008 85);
+  --foreground: oklch(0.31 0.02 265);
+  --card: oklch(0.995 0.003 85);
+  --card-foreground: oklch(0.31 0.02 265);
+  --popover: oklch(0.995 0.003 85);
+  --popover-foreground: oklch(0.31 0.02 265);
+  --primary: oklch(0.62 0.11 253);
+  --primary-foreground: oklch(0.995 0.003 85);
+  --secondary: oklch(0.635 0.077 187);
+  --secondary-foreground: oklch(0.995 0.003 85);
+  --muted: oklch(0.93 0.008 85);
+  --muted-foreground: oklch(0.51 0.03 250);
+  --accent: oklch(0.845 0.135 88);
+  --accent-foreground: oklch(0.31 0.02 265);
+  --destructive: oklch(0.7 0.115 30);
+  --destructive-foreground: oklch(0.995 0.003 85);
+  --border: oklch(0.88 0.012 250);
+  --input: oklch(0.88 0.012 250);
+  --ring: oklch(0.62 0.11 253);
+
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -140,5 +175,16 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+  :focus-visible {
+    outline: 3px solid var(--azul);
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 }
