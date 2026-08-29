@@ -86,7 +86,38 @@ export const MAYA = {
 
 export const FUNDOS = {
   capa: "/assets/fundos/background_capa.png",
+  intro: "/assets/fundos/bg_intro_investigacao.png",
+  duelo1: "/assets/fundos/bg_duelo1_feira_e_pesquisa_escolar.png",
+  duelo2: "/assets/fundos/bg_duelo2_animais_e_curiosidades.png",
+  duelo3: "/assets/fundos/bg_duelo3_astronomia_e_eclipse.png",
+  final: "/assets/fundos/bg_final_conclusao_e_conquistas.png",
 } as const;
+
+export const DECORATIVOS = {
+  fitaTeal: "/assets/interface/elementos_estacionaria/fita_teal_listrada.png",
+  fitaAzulPoa: "/assets/interface/elementos_estacionaria/fita_azul_poa.png",
+  clipeAzul: "/assets/interface/elementos_estacionaria/clipe_azul.png",
+  clipeAmarelo: "/assets/interface/elementos_estacionaria/clipe_amarelo.png",
+  clipeTeal: "/assets/interface/elementos_estacionaria/clipe_teal.png",
+  pontinhoAmarelo: "/assets/interface/elementos_estacionaria/pontinho_amarelo.png",
+  binderClipAzul: "/assets/interface/elementos_estacionaria/binder_clip_azul.png",
+  estrelaGrande: "/assets/interface/elementos_estacionaria/estrela_dourada_grande.png",
+  estrelaPequena: "/assets/interface/elementos_estacionaria/estrela_dourada_pequena.png",
+  postitDuplo: "/assets/interface/etiquetas_molduras/postit_duplo_percevejo.png",
+  postitAzul: "/assets/interface/etiquetas_molduras/postit_azul_fita_amarela.png",
+  tagCordao: "/assets/interface/etiquetas_molduras/tag_cordao.png",
+  faixaRasgadaTeal: "/assets/interface/etiquetas_molduras/faixa_rasgada_fita_teal.png",
+  seloRedondo: "/assets/interface/etiquetas_molduras/selo_redondo_vazio.png",
+  iconeCalendario: "/assets/interface/icones_investigacao/icone_calendario.png",
+  iconePerfil: "/assets/interface/icones_investigacao/icone_perfil_autoria.png",
+  iconeDocumentoCheck: "/assets/interface/icones_investigacao/icone_documento_check.png",
+  iconeCartasPergunta: "/assets/interface/icones_investigacao/icone_cartas_pergunta.png",
+  iconePastaArquivos: "/assets/interface/icones_investigacao/icone_pasta_arquivos.png",
+  iconeMapa: "/assets/interface/icones_investigacao/icone_mapa_localizacao.png",
+  iconeGlobo: "/assets/interface/icones_investigacao/icone_globo_origem.png",
+  iconeSeloEstrela: "/assets/interface/icones_investigacao/icone_selo_estrela.png",
+} as const;
+
 
 /* ---------------- Tela 3 — O que é uma fonte? ---------------- */
 
