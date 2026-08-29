@@ -94,14 +94,15 @@ export function SpeechBubble({
   return (
     <div
       className={cn(
-        "relative rounded-2xl border-2 border-azul/25 bg-card p-4 shadow-sm",
+        "relative rounded-[20px] border border-azul/20 bg-[#FDFBF6] p-4 shadow-[0_10px_24px_-14px_rgba(47,52,64,0.45)]",
         className,
       )}
     >
       <span
         aria-hidden="true"
-        className="absolute -left-2 top-8 h-4 w-4 rotate-45 border-b-2 border-l-2 border-azul/25 bg-card"
+        className="absolute -left-2 top-8 h-4 w-4 rotate-45 border-b border-l border-azul/20 bg-[#FDFBF6]"
       />
+
       <div className="flex items-start gap-3">
         <div className="flex-1 space-y-2 text-[15px] leading-snug text-grafite">{children}</div>
         {audio ? <AudioButton src={audio} rotulo="Ouvir a fala de Maya" /> : null}
