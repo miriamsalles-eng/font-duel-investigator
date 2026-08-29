@@ -408,7 +408,7 @@ export type DecorativeAsset = {
   className?: string;
 };
 
-export function DecorativeLayer({ assets }: { assets?: DecorativeAsset[] }) {
+export function DecorativeLayer({ assets }: { assets?: DecorativeAsset[] | undefined }) {
   if (!assets?.length) return null;
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 select-none">
