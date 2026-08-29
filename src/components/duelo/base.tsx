@@ -265,7 +265,7 @@ export function ProgressKit({ compacto = false }: { compacto?: boolean }) {
   return (
     <section
       aria-label="Kit do Investigador de Fontes"
-      className="rounded-2xl border-2 border-amarelo/60 bg-card px-3 py-2"
+      className="rounded-2xl border-2 border-amarelo/60 bg-[#FDFBF6]/95 px-3 py-2 shadow-[0_8px_18px_-14px_rgba(47,52,64,0.5)]"
     >
       <h2 className="text-[10px] font-extrabold uppercase tracking-widest text-cinza-azulado">
         Kit do Investigador de Fontes
@@ -364,7 +364,7 @@ export function FeedbackModal({
             primeiro.focus();
           }
         }}
-        className="w-full max-w-[720px] rounded-3xl border-2 border-azul/25 bg-card p-6 shadow-xl"
+        className="w-full max-w-[720px] rounded-[26px] border border-azul/20 bg-[#FDFBF6] p-6 shadow-[0_26px_60px_-24px_rgba(47,52,64,0.6)]"
       >
         <h2
           id="titulo-feedback"
