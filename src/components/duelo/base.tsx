@@ -400,6 +400,31 @@ export function FeedbackModal({
   );
 }
 
+/* ------------------------- Camada decorativa ------------------------- */
+
+export type DecorativeAsset = {
+  src: string;
+  className?: string;
+};
+
+export function DecorativeLayer({ assets }: { assets?: DecorativeAsset[] }) {
+  if (!assets?.length) return null;
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 select-none">
+      {assets.map((a, i) => (
+        <img
+          key={`${a.src}-${i}`}
+          src={a.src}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className={cn("pointer-events-none absolute select-none", a.className)}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ------------------------- Cabeçalho de tela ------------------------- */
 
 export function TelaBase({
@@ -408,16 +433,36 @@ export function TelaBase({
   children,
   rodape,
   kit = true,
+  fundo,
+  decoracoes,
 }: {
   titulo: string;
   etapa?: string;
   children: React.ReactNode;
   rodape: React.ReactNode;
   kit?: boolean;
+  fundo?: string;
+  decoracoes?: DecorativeAsset[];
 }) {
   return (
-    <div className="flex h-full w-full flex-col gap-3 p-5 md:p-6">
-      <header className="flex items-start justify-between gap-4">
+    <div className="relative flex h-full w-full flex-col gap-3 overflow-hidden p-5 md:p-6">
+      {fundo ? (
+        <>
+          <img
+            src={fundo}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[rgba(247,244,238,0.62)]"
+          />
+        </>
+      ) : null}
+      <DecorativeLayer assets={decoracoes} />
+      <header className="relative flex items-start justify-between gap-4">
         <div>
           {etapa ? (
             <p className="text-[10px] font-extrabold uppercase tracking-widest text-teal">
@@ -428,8 +473,9 @@ export function TelaBase({
         </div>
         {kit ? <ProgressKit compacto /> : null}
       </header>
-      <div className="min-h-0 flex-1">{children}</div>
-      <footer>{rodape}</footer>
+      <div className="relative min-h-0 flex-1">{children}</div>
+      <footer className="relative">{rodape}</footer>
     </div>
   );
 }
+
