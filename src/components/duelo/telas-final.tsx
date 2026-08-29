@@ -92,18 +92,19 @@ export function TelaCaminho() {
 
 export function TelaMetacognicao() {
   const { dispatch } = useDuelo();
+  const [passo, setPasso] = useAtividade<number>("metacognicao-passo", 0);
   const [q1, setQ1] = useAtividade<string[]>("meta-q1", []);
   const [q2, setQ2] = useAtividade<string[]>("meta-q2", []);
   const [q3, setQ3] = useAtividade<string[]>("meta-q3", []);
   const [feedback, setFeedback] = React.useState<null | "esperada" | "revisar">(null);
-
-  const pronto = q1.length === 1 && q2.length > 0 && q3.length > 0;
 
   const alternar = (
     valor: string[],
     definir: (v: string[]) => void,
     id: string,
   ) => definir(valor.includes(id) ? valor.filter((v) => v !== id) : [...valor, id]);
+
+  const liberado = passo === 0 ? q1.length === 1 : passo === 1 ? q2.length > 0 : q3.length > 0;
 
   return (
     <TelaBase
@@ -113,40 +114,62 @@ export function TelaMetacognicao() {
       etapa="Reflexão"
       rodape={
         <NavigationControls
-          aoVoltar={() => dispatch({ tipo: "voltar" })}
-          aoAvancar={() =>
-            setFeedback(q1[0] === METACOGNICAO.pergunta1.esperada ? "esperada" : "revisar")
+          aoVoltar={() =>
+            passo > 0 ? setPasso(passo - 1) : dispatch({ tipo: "voltar" })
           }
-          rotuloAvancar="CONFIRMAR"
-          avancarLiberado={pronto}
-          aviso="Responda às três perguntas para seguir."
+          aoAvancar={() => {
+            if (passo === 0) {
+              setFeedback(q1[0] === METACOGNICAO.pergunta1.esperada ? "esperada" : "revisar");
+              return;
+            }
+            if (passo === 1) {
+              setPasso(2);
+              return;
+            }
+            dispatch({ tipo: "avancar" });
+          }}
+          rotuloAvancar={passo === 2 ? "CONFIRMAR" : "SEGUIR"}
+          avancarLiberado={liberado}
+          aviso="Escolha ao menos uma resposta para seguir."
         />
       }
     >
       <div className="grid h-full grid-cols-[1fr_210px] gap-4">
-        <div className="flex min-h-0 flex-col gap-3 overflow-auto pr-1">
-          <MultipleChoice
-            enunciado={METACOGNICAO.pergunta1.enunciado}
-            opcoes={METACOGNICAO.pergunta1.alternativas}
-            selecionadas={q1}
-            aoSelecionar={(id) => setQ1([id])}
-          />
-          <MultipleChoice
-            enunciado={METACOGNICAO.pergunta2.enunciado}
-            multiplo
-            colunas={2}
-            opcoes={METACOGNICAO.pergunta2.opcoes.map((o) => ({ id: o, texto: o }))}
-            selecionadas={q2}
-            aoSelecionar={(id) => alternar(q2, setQ2, id)}
-          />
-          <MultipleChoice
-            enunciado={METACOGNICAO.pergunta3.enunciado}
-            multiplo
-            colunas={2}
-            opcoes={METACOGNICAO.pergunta3.opcoes.map((o) => ({ id: o, texto: o }))}
-            selecionadas={q3}
-            aoSelecionar={(id) => alternar(q3, setQ3, id)}
-          />
+        <div className="flex min-h-0 flex-col gap-3">
+          <p className="text-[11px] font-extrabold uppercase tracking-widest text-cinza-azulado">
+            <span aria-hidden="true" className="mr-2">
+              {["● ○ ○", "○ ● ○", "○ ○ ●"][passo]}
+            </span>
+            {passo + 1} de 3
+          </p>
+          {passo === 0 ? (
+            <MultipleChoice
+              enunciado={METACOGNICAO.pergunta1.enunciado}
+              opcoes={METACOGNICAO.pergunta1.alternativas}
+              selecionadas={q1}
+              aoSelecionar={(id) => setQ1([id])}
+            />
+          ) : null}
+          {passo === 1 ? (
+            <MultipleChoice
+              enunciado={METACOGNICAO.pergunta2.enunciado}
+              multiplo
+              colunas={2}
+              opcoes={METACOGNICAO.pergunta2.opcoes.map((o) => ({ id: o, texto: o }))}
+              selecionadas={q2}
+              aoSelecionar={(id) => alternar(q2, setQ2, id)}
+            />
+          ) : null}
+          {passo === 2 ? (
+            <MultipleChoice
+              enunciado={METACOGNICAO.pergunta3.enunciado}
+              multiplo
+              colunas={2}
+              opcoes={METACOGNICAO.pergunta3.opcoes.map((o) => ({ id: o, texto: o }))}
+              selecionadas={q3}
+              aoSelecionar={(id) => alternar(q3, setQ3, id)}
+            />
+          ) : null}
         </div>
         <div className="flex flex-col justify-between">
           <SpeechBubble audio={AUDIO.metacognicao}>
@@ -165,7 +188,7 @@ export function TelaMetacognicao() {
         rotuloFechar="SEGUIR"
         aoFechar={() => {
           setFeedback(null);
-          dispatch({ tipo: "avancar" });
+          setPasso(1);
         }}
       />
       <FeedbackModal
@@ -178,6 +201,7 @@ export function TelaMetacognicao() {
     </TelaBase>
   );
 }
+
 
 /* ---------------- Transferência ---------------- */
 
