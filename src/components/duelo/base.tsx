@@ -94,14 +94,15 @@ export function SpeechBubble({
   return (
     <div
       className={cn(
-        "relative rounded-2xl border-2 border-azul/25 bg-card p-4 shadow-sm",
+        "relative rounded-[20px] border border-azul/20 bg-[#FDFBF6] p-4 shadow-[0_10px_24px_-14px_rgba(47,52,64,0.45)]",
         className,
       )}
     >
       <span
         aria-hidden="true"
-        className="absolute -left-2 top-8 h-4 w-4 rotate-45 border-b-2 border-l-2 border-azul/25 bg-card"
+        className="absolute -left-2 top-8 h-4 w-4 rotate-45 border-b border-l border-azul/20 bg-[#FDFBF6]"
       />
+
       <div className="flex items-start gap-3">
         <div className="flex-1 space-y-2 text-[15px] leading-snug text-grafite">{children}</div>
         {audio ? <AudioButton src={audio} rotulo="Ouvir a fala de Maya" /> : null}
@@ -264,7 +265,7 @@ export function ProgressKit({ compacto = false }: { compacto?: boolean }) {
   return (
     <section
       aria-label="Kit do Investigador de Fontes"
-      className="rounded-2xl border-2 border-amarelo/60 bg-card px-3 py-2"
+      className="rounded-2xl border-2 border-amarelo/60 bg-[#FDFBF6]/95 px-3 py-2 shadow-[0_8px_18px_-14px_rgba(47,52,64,0.5)]"
     >
       <h2 className="text-[10px] font-extrabold uppercase tracking-widest text-cinza-azulado">
         Kit do Investigador de Fontes
@@ -363,7 +364,7 @@ export function FeedbackModal({
             primeiro.focus();
           }
         }}
-        className="w-full max-w-[720px] rounded-3xl border-2 border-azul/25 bg-card p-6 shadow-xl"
+        className="w-full max-w-[720px] rounded-[26px] border border-azul/20 bg-[#FDFBF6] p-6 shadow-[0_26px_60px_-24px_rgba(47,52,64,0.6)]"
       >
         <h2
           id="titulo-feedback"
@@ -400,6 +401,31 @@ export function FeedbackModal({
   );
 }
 
+/* ------------------------- Camada decorativa ------------------------- */
+
+export type DecorativeAsset = {
+  src: string;
+  className?: string;
+};
+
+export function DecorativeLayer({ assets }: { assets?: DecorativeAsset[] | undefined }) {
+  if (!assets?.length) return null;
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 select-none">
+      {assets.map((a, i) => (
+        <img
+          key={`${a.src}-${i}`}
+          src={a.src}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className={cn("pointer-events-none absolute select-none", a.className)}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ------------------------- Cabeçalho de tela ------------------------- */
 
 export function TelaBase({
@@ -408,16 +434,36 @@ export function TelaBase({
   children,
   rodape,
   kit = true,
+  fundo,
+  decoracoes,
 }: {
   titulo: string;
   etapa?: string;
   children: React.ReactNode;
   rodape: React.ReactNode;
   kit?: boolean;
+  fundo?: string;
+  decoracoes?: DecorativeAsset[];
 }) {
   return (
-    <div className="flex h-full w-full flex-col gap-3 p-5 md:p-6">
-      <header className="flex items-start justify-between gap-4">
+    <div className="relative flex h-full w-full flex-col gap-3 overflow-hidden p-5 md:p-6">
+      {fundo ? (
+        <>
+          <img
+            src={fundo}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[rgba(247,244,238,0.62)]"
+          />
+        </>
+      ) : null}
+      <DecorativeLayer assets={decoracoes} />
+      <header className="relative flex items-start justify-between gap-4">
         <div>
           {etapa ? (
             <p className="text-[10px] font-extrabold uppercase tracking-widest text-teal">
@@ -428,8 +474,9 @@ export function TelaBase({
         </div>
         {kit ? <ProgressKit compacto /> : null}
       </header>
-      <div className="min-h-0 flex-1">{children}</div>
-      <footer>{rodape}</footer>
+      <div className="relative min-h-0 flex-1">{children}</div>
+      <footer className="relative">{rodape}</footer>
     </div>
   );
 }
+

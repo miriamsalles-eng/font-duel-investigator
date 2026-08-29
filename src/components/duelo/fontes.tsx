@@ -31,8 +31,8 @@ export function SourceCard({
       id={id}
       {...(onClick ? { type: "button" as const, onClick, "aria-pressed": !!selecionada } : {})}
       className={cn(
-        "flex w-full flex-col overflow-hidden rounded-2xl border-2 bg-card text-left shadow-sm transition-colors",
-        selecionada ? "border-roxo ring-4 ring-roxo/25" : "border-cinza-azulado/30",
+        "flex w-full flex-col overflow-hidden rounded-[18px] border-2 bg-[#FDFCF8] text-left shadow-[0_12px_26px_-16px_rgba(47,52,64,0.55)] transition-colors",
+        selecionada ? "border-roxo ring-4 ring-roxo/25" : "border-cinza-azulado/25",
         onClick && "hover:border-azul",
         className,
       )}

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AUDIO, DUELO1 } from "@/lib/duelo/conteudo";
+import { DECORATIVOS, FUNDOS,AUDIO, DUELO1 } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
 import {
   CharacterMaya,
@@ -11,12 +11,21 @@ import {
 import { DragDropActivity, InvestigationPanel, MultipleChoice, useRegistrarPista } from "./atividades";
 import { FonteFeiraA, FonteFeiraB } from "./fontes";
 
+const DECOR_D1 = [
+  { src: DECORATIVOS.clipeAmarelo, className: "left-[-14px] top-[130px] w-[44px] -rotate-12 opacity-80" },
+  { src: DECORATIVOS.iconeCalendario, className: "right-[18px] bottom-[74px] w-[42px] opacity-60" },
+  { src: DECORATIVOS.iconePerfil, className: "right-[62px] bottom-[70px] w-[38px] opacity-55" },
+];
+
+
 /* ---------------- Duelo 1 — apresentação das fontes ---------------- */
 
 export function TelaDuelo1Fontes() {
   const { dispatch } = useDuelo();
   return (
     <TelaBase
+      fundo={FUNDOS.duelo1}
+      decoracoes={DECOR_D1}
       titulo="Duelo 1 — Feira de Ciências"
       etapa="Investigação guiada"
       rodape={
@@ -71,6 +80,8 @@ export function TelaDuelo1Investigacao() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.duelo1}
+      decoracoes={DECOR_D1}
       titulo="Investigação guiada"
       etapa="Duelo 1 — Feira de Ciências"
       rodape={
@@ -141,6 +152,8 @@ export function TelaDuelo1Painel() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.duelo1}
+      decoracoes={DECOR_D1}
       titulo="Painel do Duelo 1"
       etapa="Organize as pistas"
       rodape={
@@ -193,6 +206,8 @@ export function TelaDuelo1Decisao() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.duelo1}
+      decoracoes={DECOR_D1}
       titulo="Decisão do Duelo 1"
       etapa="Sua escolha"
       rodape={

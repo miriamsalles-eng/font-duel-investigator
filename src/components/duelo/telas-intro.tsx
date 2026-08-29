@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
+  DECORATIVOS,
   AUDIO,
   CRITERIOS,
   FALA_LUPA,
@@ -19,6 +20,13 @@ import {
   TelaBase,
 } from "./base";
 import { MatchColumnsActivity } from "./atividades";
+
+const DECOR_INTRO = [
+  { src: DECORATIVOS.fitaTeal, className: "left-[-18px] top-[86px] w-[110px] -rotate-6 opacity-80" },
+  { src: DECORATIVOS.clipeAzul, className: "right-[16px] bottom-[92px] w-[46px] rotate-12 opacity-80" },
+  { src: DECORATIVOS.pontinhoAmarelo, className: "left-[46%] bottom-[10px] w-[22px] opacity-70" },
+];
+
 
 /* ------------------------- Tela 1 — Capa ------------------------- */
 
@@ -64,7 +72,7 @@ export function TelaProblema() {
   const ultimo = passo >= TELA_PROBLEMA.falas.length - 1;
 
   return (
-    <TelaBase titulo="O problema" etapa="Jornal das Descobertas" kit={false}
+    <TelaBase fundo={FUNDOS.intro} decoracoes={DECOR_INTRO} titulo="O problema" etapa="Jornal das Descobertas" kit={false}
       rodape={
         <NavigationControls
           aoVoltar={() => dispatch({ tipo: "voltar" })}
@@ -99,6 +107,8 @@ export function TelaOQueEFonte() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.intro}
+      decoracoes={DECOR_INTRO}
       titulo="O que é uma fonte?"
       etapa="Antes dos duelos"
       kit={false}
@@ -162,6 +172,8 @@ export function TelaLupa() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.intro}
+      decoracoes={DECOR_INTRO}
       titulo="Lupa de investigação"
       etapa="Cinco pistas para observar"
       rodape={

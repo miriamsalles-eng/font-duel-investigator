@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AUDIO, DUELO2, PISTA_MAGICA } from "@/lib/duelo/conteudo";
+import { DECORATIVOS, FUNDOS,AUDIO, DUELO2, PISTA_MAGICA } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
 import {
   CharacterMaya,
@@ -12,10 +12,19 @@ import {
 import { InvestigationPanel, MultipleChoice, useRegistrarPista } from "./atividades";
 import { FonteMorcegoA, FonteMorcegoB } from "./fontes";
 
+const DECOR_D2 = [
+  { src: DECORATIVOS.clipeTeal, className: "left-[-12px] top-[150px] w-[44px] rotate-6 opacity-80" },
+  { src: DECORATIVOS.iconeCartasPergunta, className: "right-[20px] bottom-[70px] w-[42px] opacity-55" },
+  { src: DECORATIVOS.iconePastaArquivos, className: "right-[66px] bottom-[68px] w-[40px] opacity-50" },
+];
+
+
 export function TelaDuelo2Fontes() {
   const { dispatch } = useDuelo();
   return (
     <TelaBase
+      fundo={FUNDOS.duelo2}
+      decoracoes={DECOR_D2}
       titulo="Duelo 2 — Morcegos"
       etapa="Investigação compartilhada"
       rodape={
@@ -60,6 +69,8 @@ export function TelaDuelo2Investigacao() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.duelo2}
+      decoracoes={DECOR_D2}
       titulo="Você escolhe por onde começar"
       etapa="Duelo 2 — Morcegos"
       rodape={
@@ -114,6 +125,8 @@ export function TelaDuelo2Comparacao() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.duelo2}
+      decoracoes={DECOR_D2}
       titulo="Comparação do Duelo 2"
       etapa="Organize e decida"
       rodape={
@@ -227,6 +240,8 @@ export function TelaPistaMagica() {
   const { dispatch } = useDuelo();
   return (
     <TelaBase
+      fundo={FUNDOS.duelo2}
+      decoracoes={DECOR_D2}
       titulo="Não existe pista mágica"
       etapa="Entre os duelos"
       rodape={
