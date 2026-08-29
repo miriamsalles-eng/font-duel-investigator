@@ -1,5 +1,7 @@
 import * as React from "react";
 import {
+  DECORATIVOS,
+  FUNDOS,
   AUDIO,
   CAMINHO,
   ENCERRAMENTO,
@@ -20,6 +22,13 @@ import {
 } from "./base";
 import { DragDropActivity, MultipleChoice } from "./atividades";
 
+const DECOR_FINAL = [
+  { src: DECORATIVOS.estrelaPequena, className: "left-[16px] top-[110px] w-[26px] opacity-70" },
+  { src: DECORATIVOS.faixaRasgadaTeal, className: "right-[-14px] top-[92px] w-[120px] rotate-3 opacity-70" },
+  { src: DECORATIVOS.iconeSeloEstrela, className: "right-[24px] bottom-[70px] w-[44px] opacity-60" },
+];
+
+
 /* ---------------- Monte seu caminho de investigação ---------------- */
 
 export function TelaCaminho() {
@@ -34,6 +43,8 @@ export function TelaCaminho() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.final}
+      decoracoes={DECOR_FINAL}
       titulo={CAMINHO.titulo}
       etapa="Sua estratégia"
       rodape={
@@ -96,6 +107,8 @@ export function TelaMetacognicao() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.final}
+      decoracoes={DECOR_FINAL}
       titulo={METACOGNICAO.titulo}
       etapa="Reflexão"
       rodape={
@@ -172,6 +185,8 @@ export function TelaTransferencia() {
   const { dispatch } = useDuelo();
   return (
     <TelaBase
+      fundo={FUNDOS.final}
+      decoracoes={DECOR_FINAL}
       titulo="Leve a investigação com você"
       etapa="Transferência"
       rodape={
@@ -204,6 +219,8 @@ export function TelaEncerramento() {
   const { dispatch } = useDuelo();
   return (
     <TelaBase
+      fundo={FUNDOS.final}
+      decoracoes={DECOR_FINAL}
       titulo="Investigação concluída"
       etapa="Encerramento"
       kit={false}

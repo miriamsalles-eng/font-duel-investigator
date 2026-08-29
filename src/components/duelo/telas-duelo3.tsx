@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AUDIO, DUELO3 } from "@/lib/duelo/conteudo";
+import { DECORATIVOS, FUNDOS,AUDIO, DUELO3 } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
 import {
   CharacterMaya,
@@ -12,10 +12,19 @@ import {
 import { InvestigationPanel, MultipleChoice, useRegistrarPista } from "./atividades";
 import { FonteEclipseA, FonteEclipseB } from "./fontes";
 
+const DECOR_D3 = [
+  { src: DECORATIVOS.tagCordao, className: "left-[-10px] top-[120px] w-[54px] -rotate-6 opacity-75" },
+  { src: DECORATIVOS.iconeMapa, className: "right-[20px] bottom-[70px] w-[42px] opacity-55" },
+  { src: DECORATIVOS.iconeGlobo, className: "right-[66px] bottom-[68px] w-[40px] opacity-50" },
+];
+
+
 export function TelaDuelo3Fontes() {
   const { dispatch } = useDuelo();
   return (
     <TelaBase
+      fundo={FUNDOS.duelo3}
+      decoracoes={DECOR_D3}
       titulo="Duelo 3 — Eclipse"
       etapa="Investigação autônoma"
       rodape={
@@ -60,6 +69,8 @@ export function TelaDuelo3Investigacao() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.duelo3}
+      decoracoes={DECOR_D3}
       titulo={DUELO3.comando}
       etapa="Duelo 3 — Eclipse"
       rodape={
@@ -119,6 +130,8 @@ export function TelaDuelo3Decisao() {
 
   return (
     <TelaBase
+      fundo={FUNDOS.duelo3}
+      decoracoes={DECOR_D3}
       titulo="Decisão do Duelo 3"
       etapa="Sua escolha"
       rodape={
