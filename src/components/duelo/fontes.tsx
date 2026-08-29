@@ -15,6 +15,10 @@ export function SourceCard({
   className,
   onClick,
   id,
+  banner,
+  tituloGrande,
+  faixa,
+  cabecalho,
 }: {
   rotulo: "FONTE A" | "FONTE B";
   site: string;
@@ -24,6 +28,14 @@ export function SourceCard({
   className?: string;
   onClick?: () => void;
   id?: string;
+  /** Miniatura decorativa (não carrega informação de origem, data ou autoria). */
+  banner?: string;
+  /** Título ligeiramente maior — diferença apenas de estilo de página. */
+  tituloGrande?: boolean;
+  /** Pequena faixa gráfica colorida (apresentação informal). */
+  faixa?: boolean;
+  /** Cabeçalho institucional neutro (apresentação convencional). */
+  cabecalho?: string;
 }) {
   const Elemento = onClick ? "button" : "div";
   return (
@@ -50,8 +62,46 @@ export function SourceCard({
           {site}
         </span>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-3">
-        <h3 className="text-[15px] font-extrabold leading-tight text-grafite">{titulo}</h3>
+      {faixa ? (
+        <div aria-hidden="true" className="flex h-1.5 w-full">
+          <span className="h-full flex-1 bg-teal/70" />
+          <span className="h-full flex-1 bg-amarelo/80" />
+          <span className="h-full flex-1 bg-azul/60" />
+        </div>
+      ) : null}
+      {cabecalho ? (
+        <div className="flex items-center gap-2 border-b border-azul/15 bg-azul-claro/50 px-3 py-1.5">
+          <span
+            aria-hidden="true"
+            className="grid h-6 w-6 place-items-center rounded-md border border-azul/30 bg-card text-[10px] font-extrabold text-azul"
+          >
+            EH
+          </span>
+          <span className="text-[11px] font-extrabold uppercase tracking-wide text-azul">
+            {cabecalho}
+          </span>
+        </div>
+      ) : null}
+      <div className="flex flex-col gap-1.5 p-3">
+        {banner ? (
+          <img
+            src={banner}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            width={1024}
+            height={512}
+            className="h-[62px] w-full rounded-xl object-cover"
+          />
+        ) : null}
+        <h3
+          className={cn(
+            "font-extrabold leading-tight text-grafite",
+            tituloGrande ? "text-[19px]" : "text-[15px]",
+          )}
+        >
+          {titulo}
+        </h3>
         <div className="space-y-1 text-[12px] leading-snug text-cinza-azulado">{children}</div>
       </div>
     </Elemento>
@@ -74,11 +124,25 @@ export function FonteFeiraA(props: Partial<React.ComponentProps<typeof SourceCar
       rotulo="FONTE A"
       site="mural-de-avisos.com/feira"
       titulo="Feira de Ciências será na sexta-feira!"
+      banner="/assets/fontes/banner_feira_a.jpg"
+      tituloGrande
+      faixa
       {...props}
     >
       <p>
         A feira vai ter experimentos, maquetes e apresentações das turmas. Não esqueça de levar seu
         crachá!
+      </p>
+      <p className="flex flex-wrap gap-1.5 pt-0.5">
+        <span className="rounded-full bg-teal/15 px-2 py-0.5 text-[10px] font-bold uppercase text-teal">
+          experimentos
+        </span>
+        <span className="rounded-full bg-amarelo/25 px-2 py-0.5 text-[10px] font-bold uppercase text-grafite">
+          maquetes
+        </span>
+        <span className="rounded-full bg-azul/15 px-2 py-0.5 text-[10px] font-bold uppercase text-azul">
+          turmas
+        </span>
       </p>
       <p>Publicado em: —</p>
       <p>Publicado por: —</p>
@@ -93,17 +157,29 @@ export function FonteFeiraB(props: Partial<React.ComponentProps<typeof SourceCar
       rotulo="FONTE B"
       site="escolahorizonte.edu.exemplo/comunicados"
       titulo="Feira de Ciências 2026"
+      cabecalho="Escola Horizonte"
       {...props}
     >
       <p className="font-bold text-grafite">Escola Horizonte</p>
-      <LinhaMeta rotulo="Data do evento" valor="28 de setembro" />
-      <LinhaMeta rotulo="Horário" valor="9h às 16h" />
-      <LinhaMeta rotulo="Local" valor="Quadra da escola" />
-      <LinhaMeta rotulo="Publicado em" valor="12 de agosto de 2026" />
+      <div className="divide-y divide-cinza-azulado/15 border-y border-cinza-azulado/15">
+        <div className="py-1">
+          <LinhaMeta rotulo="Data do evento" valor="28 de setembro" />
+        </div>
+        <div className="py-1">
+          <LinhaMeta rotulo="Horário" valor="9h às 16h" />
+        </div>
+        <div className="py-1">
+          <LinhaMeta rotulo="Local" valor="Quadra da escola" />
+        </div>
+        <div className="py-1">
+          <LinhaMeta rotulo="Publicado em" valor="12 de agosto de 2026" />
+        </div>
+      </div>
       <LinhaMeta rotulo="Publicado por" valor="Coordenação Pedagógica da Escola Horizonte" />
     </SourceCard>
   );
 }
+
 
 /* ---------------- Duelo 2 — Morcegos ---------------- */
 

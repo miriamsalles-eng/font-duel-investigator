@@ -14,8 +14,11 @@
   --color-areia: var(--areia);
   --color-azul: var(--azul);
   --color-azul-claro: var(--azul-claro);
+  --color-azul-escuro: var(--azul-escuro);
   --color-teal: var(--teal);
   --color-teal-claro: var(--teal-claro);
+  --color-teal-escuro: var(--teal-escuro);
+
   --color-amarelo: var(--amarelo);
   --color-coral: var(--coral);
   --color-roxo: var(--roxo);
@@ -28,8 +31,11 @@
   --areia: oklch(0.965 0.008 85);
   --azul: oklch(0.62 0.11 253);
   --azul-claro: oklch(0.93 0.03 253);
+  --azul-escuro: oklch(0.47 0.11 253);
   --teal: oklch(0.635 0.077 187);
   --teal-claro: oklch(0.94 0.025 187);
+  --teal-escuro: oklch(0.5 0.075 187);
+
   --amarelo: oklch(0.845 0.135 88);
   --coral: oklch(0.7 0.115 30);
   --roxo: oklch(0.635 0.105 294);

@@ -464,16 +464,19 @@ export function TelaBase({
       ) : null}
       <DecorativeLayer assets={decoracoes} />
       <header className="relative flex items-start justify-between gap-4">
-        <div>
+        <div className="inline-block max-w-[62%] rounded-2xl border border-azul/15 bg-[rgba(255,252,246,0.93)] px-3 py-1.5 shadow-[0_3px_10px_rgba(47,52,64,0.14)]">
           {etapa ? (
-            <p className="text-[10px] font-extrabold uppercase tracking-widest text-teal">
+            <p className="text-[10px] font-extrabold uppercase tracking-widest text-teal-escuro">
               {etapa}
             </p>
           ) : null}
-          <h1 className="text-xl font-extrabold uppercase tracking-wide text-azul">{titulo}</h1>
+          <h1 className="text-xl font-extrabold uppercase leading-tight tracking-wide text-azul-escuro">
+            {titulo}
+          </h1>
         </div>
         {kit ? <ProgressKit compacto /> : null}
       </header>
+
       <div className="relative min-h-0 flex-1">{children}</div>
       <footer className="relative">{rodape}</footer>
     </div>

@@ -36,23 +36,24 @@ export function TelaDuelo1Fontes() {
         />
       }
     >
-      <div className="grid h-full grid-cols-[210px_1fr] gap-4">
+      <div className="grid h-full grid-cols-[260px_1fr] gap-4">
         <div className="flex flex-col justify-between">
           <SpeechBubble audio={AUDIO.duelo1}>
             <p>{DUELO1.fala}</p>
           </SpeechBubble>
-          <div className="h-[240px]">
+          <div className="h-[280px]">
             <CharacterMaya pose="neutra" className="mx-auto" />
           </div>
         </div>
-        <div className="flex min-h-0 flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <p className="text-[13px] font-semibold text-cinza-azulado">{DUELO1.situacao}</p>
-          <div className="grid min-h-0 flex-1 grid-cols-2 gap-3">
-            <FonteFeiraA className="h-full" />
-            <FonteFeiraB className="h-full" />
+          <div className="grid grid-cols-2 items-start gap-3">
+            <FonteFeiraA className="min-h-[300px]" />
+            <FonteFeiraB className="min-h-[300px]" />
           </div>
         </div>
       </div>
+
     </TelaBase>
   );
 }
@@ -102,10 +103,11 @@ export function TelaDuelo1Investigacao() {
               {passo === 0 ? DUELO1.investigacao.passo1 : DUELO1.investigacao.passo2}
             </p>
           </SpeechBubble>
-          <div className="grid min-h-0 flex-1 grid-cols-2 gap-3">
+          <div className="grid min-h-0 flex-1 grid-cols-2 items-start gap-3 overflow-hidden">
             {(["A", "B"] as const).map((lado) => (
-              <div key={lado} className="flex min-h-0 flex-col gap-2">
-                {lado === "A" ? <FonteFeiraA className="min-h-0 flex-1" /> : <FonteFeiraB className="min-h-0 flex-1" />}
+              <div key={lado} className="flex flex-col gap-2">
+                {lado === "A" ? <FonteFeiraA /> : <FonteFeiraB />}
+
                 <div className="flex flex-col gap-1.5">
                   {HOTSPOTS.filter((h) => h.fonte === lado).map((h) => (
                     <button
