@@ -1,21 +1,16 @@
 import * as React from "react";
 import type { CriterioId } from "./conteudo";
 
-/** Ordem controlada das telas (navegação por etapas — seção 9). */
+/** Ordem controlada das telas (fluxo enxuto de 14 etapas). */
 export const TELAS = [
   "capa",
   "problema",
   "fonte",
   "lupa",
-  "duelo1-fontes",
   "duelo1-investigacao",
-  "duelo1-painel",
   "duelo1-decisao",
-  "duelo2-fontes",
   "duelo2-investigacao",
   "duelo2-comparacao",
-  "pista-magica",
-  "duelo3-fontes",
   "duelo3-investigacao",
   "duelo3-decisao",
   "caminho",
@@ -26,19 +21,9 @@ export const TELAS = [
 
 export type Tela = (typeof TELAS)[number];
 
-export type Pista = {
-  id: string;
-  texto: string;
-  fonte: "A" | "B";
-  criterio: CriterioId | null;
-  duelo: 1 | 2 | 3;
-};
-
 type Estado = {
   tela: Tela;
   kit: CriterioId[];
-  /** Pistas registradas no Painel de Investigação, por duelo. */
-  pistas: Pista[];
   /** Progresso livre das atividades, preservado ao voltar. */
   atividades: Record<string, unknown>;
   audioLigado: boolean;
@@ -49,7 +34,6 @@ type Acao =
   | { tipo: "avancar" }
   | { tipo: "voltar" }
   | { tipo: "kit"; item: CriterioId }
-  | { tipo: "pista"; pista: Pista }
   | { tipo: "atividade"; chave: string; valor: unknown }
   | { tipo: "audio" }
   | { tipo: "recomecar" };
@@ -57,7 +41,6 @@ type Acao =
 const inicial: Estado = {
   tela: "capa",
   kit: [],
-  pistas: [],
   atividades: {},
   audioLigado: true,
 };
@@ -78,10 +61,6 @@ function reducer(estado: Estado, acao: Acao): Estado {
       return estado.kit.includes(acao.item)
         ? estado
         : { ...estado, kit: [...estado.kit, acao.item] };
-    case "pista":
-      return estado.pistas.some((p) => p.id === acao.pista.id)
-        ? estado
-        : { ...estado, pistas: [...estado.pistas, acao.pista] };
     case "atividade":
       return {
         ...estado,

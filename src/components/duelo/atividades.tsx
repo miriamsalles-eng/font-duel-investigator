@@ -1,14 +1,12 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { CRITERIOS } from "@/lib/duelo/conteudo";
-import type { CriterioId } from "@/lib/duelo/conteudo";
-import { useDuelo } from "@/lib/duelo/estado";
 
 /* ------------------------- ClueCard ------------------------- */
 
 export function ClueCard({
   texto,
   selecionado,
+  revisar,
   onClick,
   className,
   arrastavel,
@@ -17,6 +15,8 @@ export function ClueCard({
 }: {
   texto: string;
   selecionado?: boolean;
+  /** Marcação discreta de "reveja esta relação" (não entrega a resposta). */
+  revisar?: boolean;
   onClick?: () => void;
   className?: string;
   arrastavel?: boolean;
@@ -30,10 +30,11 @@ export function ClueCard({
     </>
   );
   const classes = cn(
-    "min-h-11 w-full rounded-xl border-2 px-3 py-2 text-left text-[13px] font-semibold leading-snug transition-colors",
+    "min-h-11 w-full rounded-xl border-2 px-3 py-2.5 text-left text-[15px] font-semibold leading-snug transition-colors",
     selecionado
       ? "border-roxo bg-roxo/12 text-grafite"
       : "border-cinza-azulado/35 bg-card text-grafite hover:border-azul",
+    revisar && "border-dashed border-amarelo bg-amarelo/15",
     className,
   );
 
@@ -59,64 +60,6 @@ export function ClueCard({
   );
 }
 
-/* ------------------------- Painel de Investigação ------------------------- */
-
-export function InvestigationPanel({
-  duelo,
-  compacto,
-}: {
-  duelo: 1 | 2 | 3;
-  compacto?: boolean;
-}) {
-  const { estado } = useDuelo();
-  const pistas = estado.pistas.filter((p) => p.duelo === duelo);
-
-  return (
-    <section
-      aria-label="Painel de Investigação"
-      className="flex h-full flex-col rounded-2xl border-2 border-teal/40 bg-teal-claro/40 p-3"
-    >
-      <h2 className="text-[10px] font-extrabold uppercase tracking-widest text-teal">
-        Painel de Investigação
-      </h2>
-      <div className="mt-2 grid min-h-0 flex-1 grid-cols-2 gap-2">
-        {(["A", "B"] as const).map((lado) => (
-          <div key={lado} className="flex min-h-0 flex-col rounded-xl border border-teal/30 bg-card p-2">
-            <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-cinza-azulado">
-              Fonte {lado}
-            </h3>
-            <ul className="mt-1 min-h-0 flex-1 space-y-1 overflow-auto pr-1">
-              {pistas.filter((p) => p.fonte === lado).length === 0 ? (
-                <li className="text-[11px] italic text-cinza-azulado">
-                  Nenhuma pista registrada ainda.
-                </li>
-              ) : null}
-              {pistas
-                .filter((p) => p.fonte === lado)
-                .map((p) => (
-                  <li
-                    key={p.id}
-                    className="rounded-lg border border-cinza-azulado/25 bg-muted px-2 py-1 text-[11px] leading-snug text-grafite"
-                  >
-                    {p.criterio && !compacto ? (
-                      <span className="mr-1 font-extrabold uppercase text-teal">
-                        {CRITERIOS.find((c) => c.id === p.criterio)?.titulo}
-                      </span>
-                    ) : null}
-                    {p.texto}
-                  </li>
-                ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <p className="mt-2 text-[10px] leading-snug text-cinza-azulado">
-        O painel apenas organiza o que você observou. Ele não dá nota nem decide por você.
-      </p>
-    </section>
-  );
-}
-
 /* ------------------------- MultipleChoice ------------------------- */
 
 export function MultipleChoice({
@@ -136,15 +79,20 @@ export function MultipleChoice({
 }) {
   return (
     <fieldset className="min-w-0">
-      <legend className="mb-2 text-[14px] font-extrabold leading-snug text-grafite">
+      <legend className="mb-2 text-[17px] font-extrabold leading-snug text-grafite">
         {enunciado}
         {multiplo ? (
-          <span className="ml-1 text-[11px] font-semibold text-cinza-azulado">
+          <span className="ml-1 text-[14px] font-semibold text-cinza-azulado">
             (você pode escolher mais de uma)
           </span>
         ) : null}
       </legend>
-      <div className={cn("grid gap-2", colunas === 2 ? "grid-cols-2" : "grid-cols-1")}>
+      <div
+        className={cn(
+          "grid gap-2.5",
+          colunas === 2 ? "grid-cols-[repeat(auto-fit,minmax(240px,1fr))]" : "grid-cols-1",
+        )}
+      >
         {opcoes.map((o) => {
           const ativo = selecionadas.includes(o.id);
           return (
@@ -155,7 +103,7 @@ export function MultipleChoice({
               aria-checked={ativo}
               onClick={() => aoSelecionar(o.id)}
               className={cn(
-                "flex min-h-11 items-start gap-2 rounded-xl border-2 px-3 py-2 text-left text-[13px] font-semibold leading-snug transition-colors",
+                "flex min-h-12 items-start gap-2.5 rounded-xl border-2 px-3.5 py-2.5 text-left text-[16px] font-semibold leading-snug transition-colors",
                 ativo
                   ? "border-roxo bg-roxo/12 text-grafite"
                   : "border-cinza-azulado/35 bg-card text-grafite hover:border-azul",
@@ -164,7 +112,7 @@ export function MultipleChoice({
               <span
                 aria-hidden="true"
                 className={cn(
-                  "mt-0.5 grid h-4 w-4 shrink-0 place-items-center border-2 text-[10px] font-black",
+                  "mt-0.5 grid h-5 w-5 shrink-0 place-items-center border-2 text-[12px] font-black",
                   multiplo ? "rounded" : "rounded-full",
                   ativo ? "border-roxo bg-roxo text-card" : "border-cinza-azulado/50",
                 )}
@@ -186,10 +134,13 @@ export function MatchColumnsActivity({
   pares,
   ligacoes,
   aoLigar,
+  revisar = [],
 }: {
   pares: { id: string; colunaA: string; colunaB: string }[];
   ligacoes: Record<string, string>;
   aoLigar: (idA: string, idB: string) => void;
+  /** IDs da coluna A que precisam ser revistos após uma confirmação incorreta. */
+  revisar?: string[];
 }) {
   const [selecionadoA, setSelecionadoA] = React.useState<string | null>(null);
   const embaralhadoB = React.useMemo(
@@ -198,30 +149,34 @@ export function MatchColumnsActivity({
   );
 
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3">
-      <div className="space-y-2">
-        <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-cinza-azulado">
+    <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-3">
+      <div className="space-y-2.5">
+        <h3 className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado">
           Coluna A — Informação
         </h3>
         {pares.map((p) => {
           const ligado = !!ligacoes[p.id];
+          const destino = pares.find((x) => x.id === ligacoes[p.id]);
           return (
             <ClueCard
               key={p.id}
               texto={p.colunaA}
               selecionado={selecionadoA === p.id || ligado}
-              {...(ligado ? { descricao: "já ligada" } : {})}
+              revisar={revisar.includes(p.id)}
+              {...(destino ? { descricao: `ligada a ${destino.colunaB}` } : {})}
               onClick={() => setSelecionadoA(selecionadoA === p.id ? null : p.id)}
             />
           );
         })}
       </div>
-      <div className="self-center text-center text-[10px] font-bold uppercase text-cinza-azulado">
+      <div className="self-center text-center text-[13px] font-bold uppercase text-cinza-azulado">
         <span aria-hidden="true">→</span>
-        <p className="mt-1 max-w-[70px] leading-tight">Escolha à esquerda e depois à direita</p>
+        <p className="mt-1 max-w-[92px] text-[12px] leading-tight">
+          Escolha à esquerda e depois à direita
+        </p>
       </div>
-      <div className="space-y-2">
-        <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-cinza-azulado">
+      <div className="space-y-2.5">
+        <h3 className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado">
           Coluna B — Fonte
         </h3>
         {embaralhadoB.map((p) => {
@@ -272,19 +227,20 @@ export function DragDropActivity({
   const disponiveis = itens.filter((i) => !colocacoes[i.id]);
 
   return (
-    <div className="grid h-full grid-cols-[minmax(0,240px)_1fr] gap-3">
+    <div className="grid h-full grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3">
       <div className="flex min-h-0 flex-col rounded-2xl border-2 border-cinza-azulado/30 bg-muted/60 p-2">
-        <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-cinza-azulado">
+        <h3 className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado">
           Pistas encontradas
         </h3>
         {legenda ? (
-          <p className="mt-1 text-[10px] leading-snug text-cinza-azulado">{legenda}</p>
+          <p className="mt-1 text-[13px] leading-snug text-cinza-azulado">{legenda}</p>
         ) : null}
-        <div className="mt-2 min-h-0 flex-1 space-y-1.5 overflow-auto pr-1">
+        <div className="mt-1.5 min-h-0 flex-1 space-y-1">
           {disponiveis.map((i) => (
             <ClueCard
               key={i.id}
               texto={i.texto}
+              className="text-[15px] py-1.5"
               selecionado={selecionado === i.id}
               arrastavel
               onDragStart={(e) => e.dataTransfer.setData("text/plain", i.id)}
@@ -292,7 +248,9 @@ export function DragDropActivity({
             />
           ))}
           {disponiveis.length === 0 ? (
-            <p className="text-[11px] italic text-cinza-azulado">Todas as pistas foram colocadas.</p>
+            <p className="text-[14px] italic text-cinza-azulado">
+              Todas as pistas foram colocadas.
+            </p>
           ) : null}
         </div>
       </div>
@@ -307,7 +265,7 @@ export function DragDropActivity({
               const id = e.dataTransfer.getData("text/plain");
               if (id) aoColocar(id, d.id);
             }}
-            className="flex min-h-0 flex-col rounded-2xl border-2 border-dashed border-teal/50 bg-teal-claro/30 p-2"
+            className="flex min-h-0 flex-col rounded-2xl border-2 border-dashed border-teal/50 bg-teal-claro/30 p-2.5"
           >
             <button
               type="button"
@@ -316,12 +274,12 @@ export function DragDropActivity({
                 aoColocar(selecionado, d.id);
                 setSelecionado(null);
               }}
-              className="rounded-lg px-1 py-1 text-left text-[11px] font-extrabold uppercase tracking-widest text-teal hover:text-azul"
+              className="rounded-lg px-1 py-1 text-left text-[13px] font-extrabold uppercase tracking-wide text-teal hover:text-azul"
               aria-label={`Colocar a pista selecionada em ${d.rotulo}`}
             >
               {d.rotulo}
             </button>
-            <ul className="mt-1 min-h-0 flex-1 space-y-1 overflow-auto pr-1">
+            <ul className="mt-1 min-h-0 flex-1 space-y-1">
               {itens
                 .filter((i) => colocacoes[i.id] === d.id)
                 .map((i) => (
@@ -329,7 +287,7 @@ export function DragDropActivity({
                     <button
                       type="button"
                       onClick={() => aoRemover?.(i.id)}
-                      className="w-full rounded-lg border border-cinza-azulado/30 bg-card px-2 py-1 text-left text-[11px] font-semibold leading-snug text-grafite hover:border-azul"
+                      className="w-full rounded-lg border border-cinza-azulado/30 bg-card px-2 py-1.5 text-left text-[14px] font-semibold leading-snug text-grafite hover:border-azul"
                       aria-label={`Retirar a pista “${i.texto}” de ${d.rotulo}`}
                     >
                       {i.texto}
@@ -344,13 +302,63 @@ export function DragDropActivity({
   );
 }
 
-/** Registra uma pista no Painel de Investigação. */
-export function useRegistrarPista(duelo: 1 | 2 | 3) {
-  const { dispatch } = useDuelo();
-  return React.useCallback(
-    (id: string, texto: string, fonte: "A" | "B", criterio: CriterioId | null = null) => {
-      dispatch({ tipo: "pista", pista: { id, texto, fonte, criterio, duelo } });
-    },
-    [dispatch, duelo],
+/* ------------------------- Ferramentas de investigação ------------------------- */
+
+/**
+ * Botões-ferramenta que NÃO entregam diagnósticos: cada clique mostra apenas
+ * a pergunta que orienta a leitura dos dois cards.
+ */
+export function InvestigationTools({
+  titulo,
+  ferramentas,
+  investigados,
+  aoInvestigar,
+  ativo,
+}: {
+  titulo: string;
+  ferramentas: { id: string; rotulo: string; pergunta: string }[];
+  investigados: string[];
+  aoInvestigar: (id: string) => void;
+  ativo: string | null;
+}) {
+  const atual = ferramentas.find((f) => f.id === ativo);
+  return (
+    <section aria-label="Ferramentas de investigação" className="min-w-0">
+      <h2 className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado">
+        {titulo}
+      </h2>
+      <ul className="mt-1 flex flex-wrap gap-1.5">
+        {ferramentas.map((f) => {
+          const feito = investigados.includes(f.id);
+          return (
+            <li key={f.id}>
+              <button
+                type="button"
+                onClick={() => aoInvestigar(f.id)}
+                aria-pressed={ativo === f.id}
+                className={cn(
+                  "min-h-11 rounded-full border-2 px-4 py-2 text-[15px] font-bold transition-colors",
+                  ativo === f.id
+                    ? "border-roxo bg-roxo/12 text-grafite"
+                    : feito
+                      ? "border-teal bg-teal-claro/60 text-teal-escuro"
+                      : "border-cinza-azulado/40 bg-card text-grafite hover:border-azul",
+                )}
+              >
+                {f.rotulo}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <p
+        aria-live="polite"
+        className="mt-1.5 rounded-xl border-2 border-amarelo bg-amarelo/15 px-3 py-1.5 text-[16px] font-semibold leading-snug text-grafite"
+      >
+        {atual
+          ? atual.pergunta
+          : "Escolha uma pista acima e procure a resposta dentro das duas fontes."}
+      </p>
+    </section>
   );
 }

@@ -1,27 +1,44 @@
 import * as React from "react";
-import { DECORATIVOS, FUNDOS,AUDIO, DUELO1 } from "@/lib/duelo/conteudo";
+import { DECORATIVOS, FUNDOS, AUDIO, DUELO1 } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
 import {
+  AudioButton,
   CharacterMaya,
   FeedbackModal,
   NavigationControls,
-  SpeechBubble,
   TelaBase,
 } from "./base";
-import { DragDropActivity, InvestigationPanel, MultipleChoice, useRegistrarPista } from "./atividades";
+import { MultipleChoice } from "./atividades";
 import { FonteFeiraA, FonteFeiraB } from "./fontes";
 
 const DECOR_D1 = [
   { src: DECORATIVOS.clipeAmarelo, className: "left-[-14px] top-[130px] w-[44px] -rotate-12 opacity-80" },
   { src: DECORATIVOS.iconeCalendario, className: "right-[18px] bottom-[74px] w-[42px] opacity-60" },
-  { src: DECORATIVOS.iconePerfil, className: "right-[62px] bottom-[70px] w-[38px] opacity-55" },
 ];
 
+const OPCOES_FONTE = [
+  { id: "A", texto: "Fonte A" },
+  { id: "B", texto: "Fonte B" },
+];
 
-/* ---------------- Duelo 1 — apresentação das fontes ---------------- */
+/* ---------------- Duelo 1 — investigação guiada (fontes + pistas) ---------------- */
 
-export function TelaDuelo1Fontes() {
+export function TelaDuelo1Investigacao() {
   const { dispatch } = useDuelo();
+  const [respostas, setRespostas] = useAtividade<Record<string, string>>("d1-guiadas", {});
+  const [erro, setErro] = React.useState(false);
+
+  const completo = DUELO1.guiadas.every((g) => respostas[g.id]);
+  const correto = DUELO1.guiadas.every((g) => respostas[g.id] === g.esperada);
+
+  const confirmar = () => {
+    if (!correto) {
+      setErro(true);
+      return;
+    }
+    dispatch({ tipo: "avancar" });
+  };
+
   return (
     <TelaBase
       fundo={FUNDOS.duelo1}
@@ -31,166 +48,46 @@ export function TelaDuelo1Fontes() {
       rodape={
         <NavigationControls
           aoVoltar={() => dispatch({ tipo: "voltar" })}
-          aoAvancar={() => dispatch({ tipo: "avancar" })}
-          rotuloAvancar="INVESTIGAR"
-        />
-      }
-    >
-      <div className="grid h-full grid-cols-[260px_1fr] gap-4">
-        <div className="flex flex-col justify-between">
-          <SpeechBubble audio={AUDIO.duelo1}>
-            <p>{DUELO1.fala}</p>
-          </SpeechBubble>
-          <div className="h-[280px]">
-            <CharacterMaya pose="neutra" className="mx-auto" />
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <p className="text-[13px] font-semibold text-cinza-azulado">{DUELO1.situacao}</p>
-          <div className="grid grid-cols-2 items-start gap-3">
-            <FonteFeiraA className="min-h-[300px]" />
-            <FonteFeiraB className="min-h-[300px]" />
-          </div>
-        </div>
-      </div>
-
-    </TelaBase>
-  );
-}
-
-/* ---------------- Duelo 1 — investigação guiada ---------------- */
-
-const HOTSPOTS = [
-  { id: "h1", passo: 0, fonte: "A" as const, rotulo: "Procurar a data na Fonte A", pista: "Não apresenta data.", criterio: "quando" as const },
-  { id: "h2", passo: 0, fonte: "B" as const, rotulo: "Procurar a data na Fonte B", pista: "A informação é deste ano.", criterio: "quando" as const },
-  { id: "h3", passo: 1, fonte: "A" as const, rotulo: "Procurar quem publicou a Fonte A", pista: "Não fica claro quem publicou.", criterio: "quem" as const },
-  { id: "h4", passo: 1, fonte: "B" as const, rotulo: "Procurar quem publicou a Fonte B", pista: "A escola está identificada.", criterio: "quem" as const },
-];
-
-export function TelaDuelo1Investigacao() {
-  const { dispatch } = useDuelo();
-  const registrar = useRegistrarPista(1);
-  const [achados, setAchados] = useAtividade<string[]>("d1-achados", []);
-  const passo = achados.filter((id) => HOTSPOTS.find((h) => h.id === id)?.passo === 0).length >= 2 ? 1 : 0;
-  const completo = achados.length === HOTSPOTS.length;
-
-  const clicar = (h: (typeof HOTSPOTS)[number]) => {
-    if (!achados.includes(h.id)) setAchados([...achados, h.id]);
-    registrar(`d1-${h.id}`, h.pista, h.fonte, h.criterio);
-  };
-
-  return (
-    <TelaBase
-      fundo={FUNDOS.duelo1}
-      decoracoes={DECOR_D1}
-      titulo="Investigação guiada"
-      etapa="Duelo 1 — Feira de Ciências"
-      rodape={
-        <NavigationControls
-          aoVoltar={() => dispatch({ tipo: "voltar" })}
-          aoAvancar={() => dispatch({ tipo: "avancar" })}
-          rotuloAvancar="COMPARAR"
-          avancarLiberado={completo}
-          aviso="Procure as pistas de data e de autoria nas duas fontes."
-        />
-      }
-    >
-      <div className="grid h-full grid-cols-[1fr_320px] gap-4">
-        <div className="flex min-h-0 flex-col gap-2">
-          <SpeechBubble audio={AUDIO.duelo1Investigacao}>
-            <p>{DUELO1.investigacao.intro}</p>
-            <p className="font-bold">
-              {passo === 0 ? DUELO1.investigacao.passo1 : DUELO1.investigacao.passo2}
-            </p>
-          </SpeechBubble>
-          <div className="grid min-h-0 flex-1 grid-cols-2 items-start gap-3 overflow-hidden">
-            {(["A", "B"] as const).map((lado) => (
-              <div key={lado} className="flex flex-col gap-2">
-                {lado === "A" ? <FonteFeiraA /> : <FonteFeiraB />}
-
-                <div className="flex flex-col gap-1.5">
-                  {HOTSPOTS.filter((h) => h.fonte === lado).map((h) => (
-                    <button
-                      key={h.id}
-                      type="button"
-                      onClick={() => clicar(h)}
-                      disabled={h.passo > passo}
-                      aria-pressed={achados.includes(h.id)}
-                      className="min-h-11 rounded-xl border-2 border-azul/40 bg-azul-claro px-3 py-2 text-left text-[12px] font-bold text-azul transition-colors hover:bg-azul hover:text-primary-foreground disabled:opacity-40"
-                    >
-                      {achados.includes(h.id) ? `Pista registrada: ${h.pista}` : h.rotulo}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <InvestigationPanel duelo={1} />
-      </div>
-    </TelaBase>
-  );
-}
-
-/* ---------------- Duelo 1 — Painel: arrastar as pistas ---------------- */
-
-export function TelaDuelo1Painel() {
-  const { dispatch } = useDuelo();
-  const [colocacoes, setColocacoes] = useAtividade<Record<string, string>>("d1-painel", {});
-  const [aparencia, setAparencia] = React.useState(false);
-
-  const itens = DUELO1.pistas.map((p) => ({ id: p.id, texto: p.texto }));
-  const investigativas = DUELO1.pistas.filter((p) => p.tipo === "pista");
-  const completo = investigativas.every((p) => colocacoes[p.id]);
-
-  const colocar = (itemId: string, destinoId: string) => {
-    const pista = DUELO1.pistas.find((p) => p.id === itemId);
-    if (pista?.tipo === "aparencia" && destinoId !== "fora") {
-      setAparencia(true);
-      return;
-    }
-    setColocacoes({ ...colocacoes, [itemId]: destinoId });
-  };
-
-  return (
-    <TelaBase
-      fundo={FUNDOS.duelo1}
-      decoracoes={DECOR_D1}
-      titulo="Painel do Duelo 1"
-      etapa="Organize as pistas"
-      rodape={
-        <NavigationControls
-          aoVoltar={() => dispatch({ tipo: "voltar" })}
-          aoAvancar={() => dispatch({ tipo: "avancar" })}
+          aoAvancar={confirmar}
           rotuloAvancar="CONFIRMAR"
           avancarLiberado={completo}
-          aviso="Coloque as quatro pistas de data e autoria em cada fonte."
+          aviso="Responda às duas perguntas para seguir."
         />
       }
     >
-      <DragDropActivity
-        itens={itens}
-        destinos={[
-          { id: "A", rotulo: "Fonte A" },
-          { id: "B", rotulo: "Fonte B" },
-          { id: "fora", rotulo: "Só aparência — não é evidência" },
-        ]}
-        colocacoes={colocacoes}
-        aoColocar={colocar}
-        aoRemover={(id) => {
-          const copia = { ...colocacoes };
-          delete copia[id];
-          setColocacoes(copia);
-        }}
-        legenda="Arraste ou selecione uma pista e depois escolha onde ela entra."
-      />
+      <div className="flex h-full min-h-0 flex-col gap-2.5">
+        <div className="flex items-start gap-3">
+          <p className="text-[17px] font-extrabold leading-snug text-grafite">{DUELO1.comando}</p>
+          <AudioButton src={AUDIO.duelo1Investigacao} rotulo="Ouvir o comando da investigação" />
+        </div>
+
+        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-3">
+          <FonteFeiraA />
+          <FonteFeiraB />
+        </div>
+
+        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-3">
+          {DUELO1.guiadas.map((g) => (
+            <MultipleChoice
+              key={g.id}
+              enunciado={g.enunciado}
+              opcoes={OPCOES_FONTE}
+              selecionadas={respostas[g.id] ? [respostas[g.id]!] : []}
+              aoSelecionar={(id) => {
+                setRespostas({ ...respostas, [g.id]: id });
+              }}
+              colunas={2}
+            />
+          ))}
+        </div>
+      </div>
 
       <FeedbackModal
-        aberto={aparencia}
-        titulo="Vamos observar de novo"
-        paragrafos={[DUELO1.feedbackAparencia]}
+        aberto={erro}
+        titulo="Vamos procurar de novo"
+        paragrafos={[DUELO1.feedbackErroGuiada]}
         rotuloFechar="REVISAR"
-        aoFechar={() => setAparencia(false)}
+        aoFechar={() => setErro(false)}
       />
     </TelaBase>
   );
@@ -201,10 +98,16 @@ export function TelaDuelo1Painel() {
 export function TelaDuelo1Decisao() {
   const { dispatch } = useDuelo();
   const [fonte, setFonte] = useAtividade<string[]>("d1-escolha", []);
-  const [pista, setPista] = useAtividade<string[]>("d1-pista-decisiva", []);
-  const [feedback, setFeedback] = React.useState(false);
+  const [pistas, setPistas] = useAtividade<string[]>("d1-pistas", []);
+  const [feedback, setFeedback] = React.useState<null | "erro" | "acerto">(null);
 
-  const pronto = fonte.length === 1 && pista.length === 1;
+  const pronto = fonte.length === 1 && pistas.length > 0;
+  const corretas = DUELO1.decisao.opcoes.filter((o) => o.correta).map((o) => o.id);
+  const temDistrator = pistas.some((p) => !corretas.includes(p));
+  const valido = fonte[0] === "B" && pistas.some((p) => corretas.includes(p)) && !temDistrator;
+
+  const alternar = (id: string) =>
+    setPistas(pistas.includes(id) ? pistas.filter((p) => p !== id) : [...pistas, id]);
 
   return (
     <TelaBase
@@ -215,55 +118,51 @@ export function TelaDuelo1Decisao() {
       rodape={
         <NavigationControls
           aoVoltar={() => dispatch({ tipo: "voltar" })}
-          aoAvancar={() => setFeedback(true)}
+          aoAvancar={() => setFeedback(valido ? "acerto" : "erro")}
           rotuloAvancar="CONFIRMAR"
           avancarLiberado={pronto}
-          aviso="Escolha uma fonte e a pista que mais ajudou."
+          aviso="Escolha uma fonte e ao menos uma pista que justifique sua decisão."
         />
       }
     >
-      <div className="grid h-full grid-cols-[1fr_240px] gap-5">
-        <div className="space-y-4">
-          <MultipleChoice
-            enunciado={DUELO1.decisao.pergunta}
-            opcoes={[
-              { id: "A", texto: "Fonte A" },
-              { id: "B", texto: "Fonte B" },
-            ]}
-            selecionadas={fonte}
-            aoSelecionar={(id) => setFonte([id])}
-            colunas={2}
-          />
-          <MultipleChoice
-            enunciado={DUELO1.decisao.perguntaPista}
-            opcoes={DUELO1.pistas
-              .filter((p) => p.tipo === "pista")
-              .map((p) => ({ id: p.id, texto: p.texto }))}
-            selecionadas={pista}
-            aoSelecionar={(id) => setPista([id])}
-            colunas={2}
-          />
-        </div>
-        <div className="flex flex-col justify-between">
-          <SpeechBubble audio={AUDIO.duelo1Decisao}>
-            <p>Que pista pesou mais para você?</p>
-          </SpeechBubble>
-          <div className="h-[280px]">
-            <CharacterMaya pose="apontandoAcima" className="mx-auto" />
-          </div>
-        </div>
+      <div className="flex h-full min-h-0 flex-col gap-4">
+        <MultipleChoice
+          enunciado={DUELO1.decisao.pergunta}
+          opcoes={OPCOES_FONTE}
+          selecionadas={fonte}
+          aoSelecionar={(id) => setFonte([id])}
+          colunas={2}
+        />
+        <MultipleChoice
+          enunciado={DUELO1.decisao.perguntaPista}
+          multiplo
+          opcoes={DUELO1.decisao.opcoes.map((o) => ({ id: o.id, texto: o.texto }))}
+          selecionadas={pistas}
+          aoSelecionar={alternar}
+          colunas={2}
+        />
+      </div>
+
+      <div aria-hidden="true" className="pointer-events-none absolute bottom-1 right-2 h-[110px]">
+        <CharacterMaya pose="apontandoAcima" />
       </div>
 
       <FeedbackModal
-        aberto={feedback}
-        titulo="Vamos comparar as duas fontes"
+        aberto={feedback === "erro"}
+        titulo="Vamos investigar mais um pouco"
+        paragrafos={[DUELO1.feedbackAparencia]}
+        rotuloFechar="REVISAR"
+        aoFechar={() => setFeedback(null)}
+      />
+      <FeedbackModal
+        aberto={feedback === "acerto"}
+        titulo="Boa investigação"
         paragrafos={[DUELO1.decisao.feedback, DUELO1.decisao.complementar]}
         rotuloFechar="SEGUIR"
         aoFechar={() => {
-          setFeedback(false);
+          setFeedback(null);
           dispatch({ tipo: "avancar" });
         }}
-        acaoSecundaria={{ rotulo: "REVISAR", aoClicar: () => setFeedback(false) }}
       />
     </TelaBase>
   );

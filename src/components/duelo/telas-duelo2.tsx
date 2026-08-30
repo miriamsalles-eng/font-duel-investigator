@@ -1,278 +1,174 @@
 import * as React from "react";
-import { DECORATIVOS, FUNDOS,AUDIO, DUELO2, PISTA_MAGICA } from "@/lib/duelo/conteudo";
+import { AUDIO, DECORATIVOS, DUELO2, FUNDOS, PISTA_MAGICA } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
 import {
+  AudioButton,
   CharacterMaya,
   FeedbackModal,
-  InvestigationButton,
   NavigationControls,
-  SpeechBubble,
   TelaBase,
 } from "./base";
-import { InvestigationPanel, MultipleChoice, useRegistrarPista } from "./atividades";
+import { InvestigationTools, MultipleChoice } from "./atividades";
 import { FonteMorcegoA, FonteMorcegoB } from "./fontes";
 
 const DECOR_D2 = [
-  { src: DECORATIVOS.clipeTeal, className: "left-[-12px] top-[150px] w-[44px] rotate-6 opacity-80" },
-  { src: DECORATIVOS.iconeCartasPergunta, className: "right-[20px] bottom-[70px] w-[42px] opacity-55" },
-  { src: DECORATIVOS.iconePastaArquivos, className: "right-[66px] bottom-[68px] w-[40px] opacity-50" },
+  { src: DECORATIVOS.clipeTeal, className: "left-[-14px] top-[140px] w-[44px] -rotate-6 opacity-80" },
+  { src: DECORATIVOS.iconeCartasPergunta, className: "right-[16px] bottom-[76px] w-[44px] opacity-60" },
 ];
 
-
-export function TelaDuelo2Fontes() {
-  const { dispatch } = useDuelo();
-  return (
-    <TelaBase
-      fundo={FUNDOS.duelo2}
-      decoracoes={DECOR_D2}
-      titulo="Duelo 2 — Morcegos"
-      etapa="Investigação compartilhada"
-      rodape={
-        <NavigationControls
-          aoVoltar={() => dispatch({ tipo: "voltar" })}
-          aoAvancar={() => dispatch({ tipo: "avancar" })}
-          rotuloAvancar="INVESTIGAR"
-        />
-      }
-    >
-      <div className="grid h-full grid-cols-[210px_1fr] gap-4">
-        <div className="flex flex-col justify-between">
-          <SpeechBubble audio={AUDIO.duelo2}>
-            <p className="font-bold">{DUELO2.pergunta}</p>
-            <p>{DUELO2.fala}</p>
-          </SpeechBubble>
-          <div className="h-[250px]">
-            <CharacterMaya pose="pensando" className="mx-auto" />
-          </div>
-        </div>
-        <div className="grid min-h-0 grid-cols-2 gap-3">
-          <FonteMorcegoA className="h-full" />
-          <FonteMorcegoB className="h-full" />
-        </div>
-      </div>
-    </TelaBase>
-  );
-}
+/* ---------------- Duelo 2 — investigação compartilhada ---------------- */
 
 export function TelaDuelo2Investigacao() {
   const { dispatch } = useDuelo();
-  const registrar = useRegistrarPista(2);
-  const [feitos, setFeitos] = useAtividade<string[]>("d2-investigacoes", []);
+  const [investigados, setInvestigados] = useAtividade<string[]>("d2-ferramentas", []);
+  const [ativo, setAtivo] = React.useState<string | null>(null);
 
   const investigar = (id: string) => {
-    const achado = DUELO2.achados[id];
-    if (!achado) return;
-    if (!feitos.includes(id)) setFeitos([...feitos, id]);
-    registrar(`d2-${id}-A`, achado.A, "A");
-    registrar(`d2-${id}-B`, achado.B, "B");
+    setAtivo(id);
+    if (!investigados.includes(id)) setInvestigados([...investigados, id]);
   };
 
   return (
     <TelaBase
       fundo={FUNDOS.duelo2}
       decoracoes={DECOR_D2}
-      titulo="Você escolhe por onde começar"
-      etapa="Duelo 2 — Morcegos"
+      titulo="Duelo 2 — Morcegos são cegos?"
+      etapa="Investigação compartilhada"
       rodape={
         <NavigationControls
           aoVoltar={() => dispatch({ tipo: "voltar" })}
           aoAvancar={() => dispatch({ tipo: "avancar" })}
-          rotuloAvancar="COMPARAR"
-          avancarLiberado={feitos.length >= 2}
-          aviso="Escolha pelo menos duas investigações antes de comparar."
+          rotuloAvancar="DECIDIR"
+          avancarLiberado={investigados.length >= 2}
+          aviso="Investigue pelo menos duas pistas nas fontes para seguir."
         />
       }
     >
-      <div className="grid h-full grid-cols-[260px_1fr_320px] gap-4">
-        <div className="flex flex-col gap-2">
-          <SpeechBubble audio={AUDIO.duelo2Investigacao}>
-            <p>{DUELO2.fala}</p>
-          </SpeechBubble>
-          <ul className="space-y-1.5">
-            {DUELO2.opcoesInvestigacao.map((o) => (
-              <li key={o.id}>
-                <InvestigationButton
-                  tom={feitos.includes(o.id) ? "teal" : "contorno"}
-                  className="w-full text-[12px]"
-                  onClick={() => investigar(o.id)}
-                  aria-pressed={feitos.includes(o.id)}
-                >
-                  {o.rotulo}
-                </InvestigationButton>
-              </li>
-            ))}
-          </ul>
+      <div className="flex h-full min-h-0 flex-col gap-2">
+        <div className="flex items-start gap-3">
+          <p className="text-[17px] font-extrabold leading-snug text-grafite">{DUELO2.comando}</p>
+          <AudioButton src={AUDIO.duelo2Investigacao} rotulo="Ouvir o comando da investigação" />
         </div>
-        <div className="grid min-h-0 grid-cols-2 gap-3">
-          <FonteMorcegoA className="h-full" />
-          <FonteMorcegoB className="h-full" />
+
+        <InvestigationTools
+          titulo="Pistas para investigar"
+          ferramentas={DUELO2.ferramentas}
+          investigados={investigados}
+          aoInvestigar={investigar}
+          ativo={ativo}
+        />
+
+        <div className="grid min-h-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-3">
+          <FonteMorcegoA />
+          <FonteMorcegoB />
         </div>
-        <InvestigationPanel duelo={2} />
       </div>
     </TelaBase>
   );
 }
 
-export function TelaDuelo2Comparacao() {
-  const { dispatch } = useDuelo();
-  const [organizacao, setOrganizacao] = useAtividade<Record<string, string>>("d2-cartoes", {});
-  const [escolha, setEscolha] = useAtividade<string[]>("d2-escolha", []);
-  const [justificativa, setJustificativa] = useAtividade<string[]>("d2-justificativa", []);
-  const [feedback, setFeedback] = React.useState<null | "A" | "B">(null);
+/* ---------------- Duelo 2 — decisão e comparação ---------------- */
 
-  const organizados = Object.keys(organizacao).length === DUELO2.cartoesComparacao.length;
-  const pronto = organizados && escolha.length === 1 && justificativa.length > 0;
+export function TelaDuelo2Decisao() {
+  const { dispatch } = useDuelo();
+  const [fonte, setFonte] = useAtividade<string[]>("d2-escolha", []);
+  const [pistas, setPistas] = useAtividade<string[]>("d2-pistas", []);
+  const [feedback, setFeedback] = React.useState<null | "fonteA" | "aparencia" | "poucas" | "acerto">(
+    null,
+  );
+
+  const corretas = DUELO2.decisao.opcoes.filter((o) => o.correta).map((o) => o.id);
+  const pronto = fonte.length === 1 && pistas.length > 0;
+
+  const confirmar = () => {
+    if (fonte[0] !== "B") {
+      setFeedback("fonteA");
+      return;
+    }
+    if (pistas.some((p) => !corretas.includes(p))) {
+      setFeedback("aparencia");
+      return;
+    }
+    if (pistas.length < 2) {
+      setFeedback("poucas");
+      return;
+    }
+    setFeedback("acerto");
+  };
+
+  const alternar = (id: string) =>
+    setPistas(pistas.includes(id) ? pistas.filter((p) => p !== id) : [...pistas, id]);
 
   return (
     <TelaBase
       fundo={FUNDOS.duelo2}
       decoracoes={DECOR_D2}
-      titulo="Comparação do Duelo 2"
-      etapa="Organize e decida"
+      titulo="Decisão do Duelo 2"
+      etapa="Comparar antes de confiar"
       rodape={
         <NavigationControls
           aoVoltar={() => dispatch({ tipo: "voltar" })}
-          aoAvancar={() => setFeedback((escolha[0] as "A" | "B") ?? "B")}
+          aoAvancar={confirmar}
           rotuloAvancar="CONFIRMAR"
           avancarLiberado={pronto}
-          aviso="Organize os seis cartões, escolha uma fonte e complete a justificativa."
+          aviso="Escolha uma fonte e as pistas que justificam sua decisão."
         />
       }
     >
-      <div className="grid h-full grid-cols-[1fr_320px] gap-4">
-        <div className="flex min-h-0 flex-col gap-2 overflow-auto pr-1">
-          <p className="text-[11px] font-extrabold uppercase tracking-widest text-cinza-azulado">
-            Coloque cada cartão na fonte em que você observou isso
-          </p>
-          <ul className="space-y-1.5">
-            {DUELO2.cartoesComparacao.map((texto) => (
-              <li
-                key={texto}
-                className="flex items-center gap-2 rounded-xl border-2 border-cinza-azulado/30 bg-card px-3 py-1.5"
-              >
-                <span className="flex-1 text-[13px] font-semibold leading-snug text-grafite">
-                  {texto}
-                </span>
-                {(["A", "B"] as const).map((lado) => (
-                  <button
-                    key={lado}
-                    type="button"
-                    aria-pressed={organizacao[texto] === lado}
-                    aria-label={`Cartão “${texto}” na Fonte ${lado}`}
-                    onClick={() => setOrganizacao({ ...organizacao, [texto]: lado })}
-                    className={
-                      organizacao[texto] === lado
-                        ? "min-h-9 rounded-full border-2 border-roxo bg-roxo/12 px-3 text-[11px] font-extrabold text-roxo"
-                        : "min-h-9 rounded-full border-2 border-cinza-azulado/35 px-3 text-[11px] font-extrabold text-cinza-azulado hover:border-azul"
-                    }
-                  >
-                    Fonte {lado}
-                  </button>
-                ))}
-              </li>
-            ))}
-          </ul>
+      <div className="flex h-full min-h-0 flex-col gap-4">
+        <MultipleChoice
+          enunciado={DUELO2.decisao.pergunta}
+          opcoes={DUELO2.decisao.opcoesFonte}
+          selecionadas={fonte}
+          aoSelecionar={(id) => setFonte([id])}
+          colunas={2}
+        />
+        <MultipleChoice
+          enunciado={DUELO2.decisao.perguntaJustificativa}
+          multiplo
+          opcoes={DUELO2.decisao.opcoes.map((o) => ({ id: o.id, texto: o.texto }))}
+          selecionadas={pistas}
+          aoSelecionar={alternar}
+          colunas={2}
+        />
+      </div>
 
-          <MultipleChoice
-            enunciado={DUELO2.perguntaDecisao}
-            opcoes={[
-              { id: "A", texto: "Fonte A — Curiosidades Superincríveis" },
-              { id: "B", texto: "Fonte B — Museu da Vida Animal" },
-            ]}
-            selecionadas={escolha}
-            aoSelecionar={(id) => setEscolha([id])}
-            colunas={2}
-          />
-
-          <MultipleChoice
-            enunciado={`Complete: ${DUELO2.justificativaModelo}`}
-            multiplo
-            opcoes={DUELO2.cartoesComparacao.map((t) => ({ id: t, texto: t }))}
-            selecionadas={justificativa}
-            aoSelecionar={(id) =>
-              setJustificativa(
-                justificativa.includes(id)
-                  ? justificativa.filter((j) => j !== id)
-                  : [...justificativa, id],
-              )
-            }
-            colunas={2}
-          />
-        </div>
-        <div className="flex min-h-0 flex-col gap-2">
-          <InvestigationPanel duelo={2} compacto />
-          <SpeechBubble audio={AUDIO.duelo2Comparacao}>
-            <p>Que outra pista pode nos ajudar?</p>
-          </SpeechBubble>
-        </div>
+      <div aria-hidden="true" className="pointer-events-none absolute bottom-1 right-2 h-[110px]">
+        <CharacterMaya pose="apontando" />
       </div>
 
       <FeedbackModal
-        aberto={feedback === "B"}
-        titulo="Comparando evidências"
-        paragrafos={[DUELO2.feedback]}
+        aberto={feedback === "fonteA"}
+        titulo="Vamos observar de novo"
+        paragrafos={[DUELO2.feedbackFonteA]}
+        rotuloFechar="REVISAR"
+        aoFechar={() => setFeedback(null)}
+      />
+      <FeedbackModal
+        aberto={feedback === "aparencia"}
+        titulo="Vamos observar de novo"
+        paragrafos={[DUELO2.feedbackAparencia]}
+        rotuloFechar="REVISAR"
+        aoFechar={() => setFeedback(null)}
+      />
+      <FeedbackModal
+        aberto={feedback === "poucas"}
+        titulo="Falta comparar mais uma pista"
+        paragrafos={[DUELO2.feedbackPoucas]}
+        rotuloFechar="REVISAR"
+        aoFechar={() => setFeedback(null)}
+      />
+      <FeedbackModal
+        aberto={feedback === "acerto"}
+        titulo="Comparação concluída"
+        paragrafos={[DUELO2.feedback, ...PISTA_MAGICA.falas]}
+        destaque={PISTA_MAGICA.destaque}
         rotuloFechar="SEGUIR"
         aoFechar={() => {
           setFeedback(null);
           dispatch({ tipo: "avancar" });
         }}
-        acaoSecundaria={{ rotulo: "REVISAR", aoClicar: () => setFeedback(null) }}
       />
-      <FeedbackModal
-        aberto={feedback === "A"}
-        titulo="Antes de decidir"
-        paragrafos={[DUELO2.feedbackFonteA]}
-        rotuloFechar="REVISAR"
-        aoFechar={() => setFeedback(null)}
-        acaoSecundaria={{
-          rotulo: "SEGUIR MESMO ASSIM",
-          aoClicar: () => {
-            setFeedback(null);
-            dispatch({ tipo: "avancar" });
-          },
-        }}
-      />
-    </TelaBase>
-  );
-}
-
-export function TelaPistaMagica() {
-  const { dispatch } = useDuelo();
-  return (
-    <TelaBase
-      fundo={FUNDOS.duelo2}
-      decoracoes={DECOR_D2}
-      titulo="Não existe pista mágica"
-      etapa="Entre os duelos"
-      rodape={
-        <NavigationControls
-          aoVoltar={() => dispatch({ tipo: "voltar" })}
-          aoAvancar={() => dispatch({ tipo: "avancar" })}
-          rotuloAvancar="SEGUIR"
-        />
-      }
-    >
-      <div className="grid h-full grid-cols-[280px_1fr] items-center gap-6">
-        <div className="h-[400px]">
-          <CharacterMaya pose="apontando" className="mx-auto" />
-        </div>
-        <div className="space-y-3">
-          <SpeechBubble audio={AUDIO.pistaMagica}>
-            {PISTA_MAGICA.falas.map((f) => (
-              <p key={f} className="text-[16px]">
-                {f}
-              </p>
-            ))}
-          </SpeechBubble>
-          <div className="rounded-2xl border-2 border-amarelo bg-amarelo/15 p-4">
-            {PISTA_MAGICA.destaque.map((d) => (
-              <p key={d} className="text-lg font-extrabold uppercase leading-tight text-grafite">
-                {d}
-              </p>
-            ))}
-          </div>
-        </div>
-      </div>
     </TelaBase>
   );
 }
