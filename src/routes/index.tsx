@@ -2,23 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ProvedorDuelo, useDuelo } from "@/lib/duelo/estado";
 import { Stage } from "@/components/duelo/base";
 import { TelaCapa, TelaProblema, TelaOQueEFonte, TelaLupa } from "@/components/duelo/telas-intro";
-import {
-  TelaDuelo1Fontes,
-  TelaDuelo1Investigacao,
-  TelaDuelo1Painel,
-  TelaDuelo1Decisao,
-} from "@/components/duelo/telas-duelo1";
-import {
-  TelaDuelo2Fontes,
-  TelaDuelo2Investigacao,
-  TelaDuelo2Comparacao,
-  TelaPistaMagica,
-} from "@/components/duelo/telas-duelo2";
-import {
-  TelaDuelo3Fontes,
-  TelaDuelo3Investigacao,
-  TelaDuelo3Decisao,
-} from "@/components/duelo/telas-duelo3";
+import { TelaDuelo1Investigacao, TelaDuelo1Decisao } from "@/components/duelo/telas-duelo1";
+import { TelaDuelo2Investigacao, TelaDuelo2Decisao } from "@/components/duelo/telas-duelo2";
+import { TelaDuelo3Investigacao, TelaDuelo3Decisao } from "@/components/duelo/telas-duelo3";
 import {
   TelaCaminho,
   TelaMetacognicao,
@@ -55,24 +41,14 @@ function Roteador() {
       return <TelaOQueEFonte />;
     case "lupa":
       return <TelaLupa />;
-    case "duelo1-fontes":
-      return <TelaDuelo1Fontes />;
     case "duelo1-investigacao":
       return <TelaDuelo1Investigacao />;
-    case "duelo1-painel":
-      return <TelaDuelo1Painel />;
     case "duelo1-decisao":
       return <TelaDuelo1Decisao />;
-    case "duelo2-fontes":
-      return <TelaDuelo2Fontes />;
     case "duelo2-investigacao":
       return <TelaDuelo2Investigacao />;
     case "duelo2-comparacao":
-      return <TelaDuelo2Comparacao />;
-    case "pista-magica":
-      return <TelaPistaMagica />;
-    case "duelo3-fontes":
-      return <TelaDuelo3Fontes />;
+      return <TelaDuelo2Decisao />;
     case "duelo3-investigacao":
       return <TelaDuelo3Investigacao />;
     case "duelo3-decisao":

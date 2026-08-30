@@ -123,6 +123,9 @@ export const DECORATIVOS = {
 
 export const LIGAR_COLUNAS = {
   definicao: "Fonte é o lugar, pessoa ou instituição de onde uma informação vem.",
+  comando: "Ligue cada informação à fonte de onde ela pode vir.",
+  feedbackErro:
+    "Algumas ligações ainda não combinam com a origem mais adequada. Observe novamente e revise.",
   pares: [
     {
       id: "escola",
@@ -146,29 +149,43 @@ export const LIGAR_COLUNAS = {
 
 /* ---------------- Duelo 1 — Feira de Ciências ---------------- */
 
+export type OpcaoJustificativa = { id: string; texto: string; correta: boolean };
+
 export const DUELO1 = {
   situacao:
     "Maya precisa descobrir a data da Feira de Ciências para escrever uma notícia.",
   fala: "Quero contar quando acontecerá a Feira de Ciências da escola. Encontrei duas informações diferentes.",
-  investigacao: {
-    intro: "Antes de colocar a data no jornal, vamos procurar pistas.",
-    passo1: "Veja se conseguimos descobrir quando cada informação foi publicada.",
-    passo2: "Agora procure quem publicou cada informação.",
-  },
-  pistas: [
-    { id: "p1", texto: "Não apresenta data.", fonte: "A", tipo: "pista" },
-    { id: "p2", texto: "Não fica claro quem publicou.", fonte: "A", tipo: "pista" },
-    { id: "p3", texto: "A escola está identificada.", fonte: "B", tipo: "pista" },
-    { id: "p4", texto: "A informação é deste ano.", fonte: "B", tipo: "pista" },
-    { id: "d1", texto: "Tem uma imagem bonita.", fonte: null, tipo: "aparencia" },
-    { id: "d2", texto: "Tem letras grandes.", fonte: null, tipo: "aparencia" },
-    { id: "d3", texto: "Tem muitas cores.", fonte: null, tipo: "aparencia" },
-  ] as const,
+  comando:
+    "Observe as duas fontes. Vamos procurar duas pistas importantes: quando a informação foi publicada e quem publicou.",
+  guiadas: [
+    {
+      id: "quando",
+      enunciado: "Qual fonte informa quando a informação foi publicada?",
+      esperada: "B",
+    },
+    {
+      id: "quem",
+      enunciado: "Qual fonte deixa claro quem publicou a informação?",
+      esperada: "B",
+    },
+  ],
+  feedbackErroGuiada: "Procure essa informação dentro dos dois cards e tente novamente.",
   feedbackAparencia:
-    "A aparência pode chamar nossa atenção, mas ela não mostra de onde veio a informação. Procure pistas sobre data, autoria e origem.",
+    "A aparência pode chamar atenção, mas precisamos de pistas sobre autoria, data e adequação.",
   decisao: {
     pergunta: "Qual fonte você usaria para informar a data da Feira de Ciências deste ano?",
-    perguntaPista: "Qual pista ajudou mais na sua decisão?",
+    perguntaPista: "Qual pista ajuda a justificar sua escolha?",
+    opcoes: [
+      {
+        id: "autoria",
+        texto: "A escola está identificada como responsável pela publicação.",
+        correta: true,
+      },
+      { id: "data", texto: "A informação apresenta data atual.", correta: true },
+      { id: "imagem", texto: "Tem uma imagem bonita.", correta: false },
+      { id: "letras", texto: "Tem letras maiores.", correta: false },
+      { id: "cores", texto: "Tem mais cores.", correta: false },
+    ] as OpcaoJustificativa[],
     feedback:
       "Para descobrir a data da feira deste ano, a informação atual publicada pela própria escola é mais adequada.",
     complementar:
@@ -181,58 +198,47 @@ export const DUELO1 = {
 export const DUELO2 = {
   pergunta: "Morcegos são cegos?",
   fala: "Desta vez, você escolhe por onde começar.",
-  opcoesInvestigacao: [
-    { id: "quem", rotulo: "Quem publicou?" },
-    { id: "quando", rotulo: "Quando?" },
-    { id: "origem", rotulo: "De onde veio a informação?" },
-    { id: "explicacao", rotulo: "Há alguma explicação?" },
-    { id: "confirmam", rotulo: "Outra fonte confirma?" },
+  comando: "Leia as duas fontes e escolha pistas para comparar.",
+  ferramentas: [
+    { id: "quem", rotulo: "Quem publicou?", pergunta: "Procure nas duas fontes: quem escreveu ou publicou?" },
+    { id: "quando", rotulo: "Quando?", pergunta: "Procure quando cada informação foi publicada." },
+    { id: "origem", rotulo: "De onde veio a informação?", pergunta: "A página mostra de onde veio a afirmação?" },
+    { id: "explicacao", rotulo: "Há alguma explicação?", pergunta: "Há uma explicação ou apenas uma afirmação?" },
+    { id: "confirmam", rotulo: "Outra fonte confirma?", pergunta: "Há referências que possam ser conferidas?" },
   ],
-  achados: {
-    quem: {
-      A: "Não apresenta autor.",
-      B: "Autora identificada como bióloga.",
-    },
-    quando: {
-      A: "Não apresenta data.",
-      B: "Apresenta data de publicação.",
-    },
-    origem: {
-      A: "Não informa de onde veio a afirmação.",
-      B: "Instituição identificada: Museu da Vida Animal.",
-    },
-    explicacao: {
-      A: "Usa “todo mundo sabe” como justificativa.",
-      B: "Apresenta explicação sobre como os morcegos se orientam.",
-    },
-    confirmam: {
-      A: "Não apresenta referências para comparar.",
-      B: "Apresenta referências.",
-    },
-  } as Record<string, { A: string; B: string }>,
-  cartoesComparacao: [
-    "Tem autora identificada.",
-    "Não informa de onde veio a afirmação.",
-    "Apresenta explicação.",
-    "Usa “todo mundo sabe” como justificativa.",
-    "Apresenta referências.",
-    "Possui título chamativo.",
-  ],
-  perguntaDecisao: "Em qual fonte você confiaria mais para responder à pergunta?",
-  justificativaModelo: "Eu confiaria mais na fonte ___ porque ___.",
+  decisao: {
+    pergunta:
+      "Em qual fonte você confiaria mais para responder à pergunta “Morcegos são cegos?”",
+    opcoesFonte: [
+      { id: "A", texto: "Fonte A — Curiosidades Superincríveis" },
+      { id: "B", texto: "Fonte B — Museu da Vida Animal" },
+    ],
+    perguntaJustificativa: "Escolha pelo menos duas pistas que justificam sua decisão.",
+    opcoes: [
+      { id: "autor", texto: "Identifica quem produziu a informação.", correta: true },
+      { id: "data", texto: "Informa quando o conteúdo foi publicado.", correta: true },
+      { id: "explicacao", texto: "Apresenta uma explicação para a informação.", correta: true },
+      { id: "referencias", texto: "Apresenta referências que podem ser conferidas.", correta: true },
+      { id: "titulo", texto: "Tem um título chamativo.", correta: false },
+      { id: "aparencia", texto: "Parece mais bonita.", correta: false },
+    ] as OpcaoJustificativa[],
+  },
+  feedbackFonteA:
+    "Observe novamente: essa fonte explica como chegou à afirmação e permite conferir a informação?",
+  feedbackAparencia:
+    "Uma página pode chamar atenção pela aparência, mas isso não é evidência de confiabilidade. Procure pistas no conteúdo.",
+  feedbackPoucas:
+    "Escolha pelo menos duas pistas do próprio conteúdo das fontes para justificar sua decisão.",
   feedback:
     "Você não escolheu apenas pelo título. Comparou quem publicou, as explicações e as evidências.",
-  feedbackFonteA:
-    "Vamos conferir uma coisa antes de decidir: essa página explica como chegou a essa afirmação?",
 };
 
-/* ---------------- Tela — Não existe pista mágica ---------------- */
+/* ---------------- Não existe pista mágica (integrado ao Duelo 2) ---------------- */
 
 export const PISTA_MAGICA = {
   falas: [
-    "Percebeu uma coisa importante?",
-    "Uma página pode parecer convincente e ainda apresentar poucas pistas sobre de onde veio a informação.",
-    "Mas ter autor e data também não garante sozinho que tudo esteja correto.",
+    "Uma página pode parecer convincente e ainda apresentar poucas pistas sobre a origem da informação.",
+    "Ter autor ou data também não garante sozinho que tudo esteja correto.",
   ],
   destaque: ["CONFIAR NÃO É ENCONTRAR UMA PISTA MÁGICA.", "É JUNTAR E COMPARAR EVIDÊNCIAS."],
 };
@@ -242,38 +248,43 @@ export const PISTA_MAGICA = {
 export const DUELO3 = {
   fala: "Agora vou deixar a investigação quase toda com você.",
   pergunta: "Será possível observar um eclipse da nossa cidade nesta sexta-feira?",
-  comando: "INVESTIGUE ANTES DE ESCOLHER.",
-  opcoesInvestigacao: [
-    { id: "autoria", rotulo: "Autoria" },
-    { id: "data", rotulo: "Data" },
-    { id: "local", rotulo: "Local" },
-    { id: "referencias", rotulo: "Referências" },
-    { id: "contexto", rotulo: "Contexto" },
-    { id: "adequacao", rotulo: "Adequação à pergunta" },
+  comando: "Agora você escolhe quais pistas investigar antes de decidir.",
+  ferramentas: [
+    { id: "autoria", rotulo: "Autoria", pergunta: "Quem publicou cada informação?" },
+    { id: "data", rotulo: "Data", pergunta: "Quando cada informação foi publicada?" },
+    { id: "local", rotulo: "Local", pergunta: "De que lugar cada fonte está falando?" },
+    { id: "referencias", rotulo: "Referências", pergunta: "Que elementos permitem conferir a informação?" },
+    { id: "contexto", rotulo: "Contexto", pergunta: "Sobre que situação cada texto está falando?" },
+    {
+      id: "adequacao",
+      rotulo: "Adequação à pergunta",
+      pergunta: "Qual deles responde especificamente sobre esta sexta-feira e esta cidade?",
+    },
   ],
-  achados: {
-    autoria: { A: "Autor identificado.", B: "Equipe do Observatório da Cidade identificada." },
-    data: { A: "Publicação de 2023.", B: "Publicação recente." },
-    local: { A: "Fala de um eclipse observado em outra região.", B: "Cidade identificada." },
-    referencias: {
-      A: "Conteúdo de astronomia, sem calendário atualizado.",
-      B: "Calendário astronômico atual.",
-    },
-    contexto: {
-      A: "Aparência organizada e profissional.",
-      B: "Aparência organizada e profissional.",
-    },
-    adequacao: {
-      A: "Não trata desta sexta-feira nem desta cidade.",
-      B: "Informa a visibilidade do fenômeno para esta cidade.",
-    },
-  } as Record<string, { A: string; B: string }>,
+  criteriosChave: ["data", "local", "adequacao"],
+  avisoInvestigacao:
+    "Investigue pelo menos duas pistas ligadas à data, ao local ou à adequação da informação.",
   decisao: {
     pergunta:
       "Qual fonte você usaria para responder à pergunta sobre esta sexta-feira e esta cidade?",
-    perguntaPistas: "Agora escolha as pistas que justificam sua escolha.",
+    opcoesFonte: [
+      { id: "A", texto: "Fonte A — Céu e Estrelas" },
+      { id: "B", texto: "Fonte B — Observatório da Cidade" },
+    ],
+    perguntaPistas: "Escolha as pistas que justificam sua decisão.",
+    opcoes: [
+      { id: "data-atual", texto: "Foi publicada nesta semana.", correta: true },
+      { id: "local", texto: "Fala especificamente da nossa cidade.", correta: true },
+      { id: "adequacao", texto: "Informa a visibilidade do eclipse para esta cidade.", correta: true },
+      { id: "calendario", texto: "Apresenta um calendário astronômico atual.", correta: true },
+      { id: "aparencia", texto: "Tem aparência profissional.", correta: false },
+      { id: "antiga", texto: "Foi publicada em 2023.", correta: false },
+      { id: "outra-regiao", texto: "Conta sobre um eclipse observado em outra região.", correta: false },
+    ] as OpcaoJustificativa[],
+    feedbackErro:
+      "Para responder sobre esta sexta-feira e esta cidade, procure uma informação atual e adequada ao lugar.",
     feedback:
-      "A primeira fonte pode ser uma boa fonte sobre astronomia, mas essa informação é antiga e fala de outro lugar.",
+      "A primeira fonte pode ser útil para conhecer astronomia, mas é antiga e fala de outro lugar.",
     complementar:
       "Para responder à pergunta sobre esta sexta-feira e esta cidade, precisamos de uma informação atual e adequada ao local.",
     destaque: [
@@ -282,6 +293,7 @@ export const DUELO3 = {
     ],
   },
 };
+
 
 /* ---------------- Monte seu caminho de investigação ---------------- */
 
