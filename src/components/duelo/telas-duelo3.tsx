@@ -1,13 +1,7 @@
 import * as React from "react";
 import { AUDIO, DECORATIVOS, DUELO3, FUNDOS } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
-import {
-  AudioButton,
-  CharacterMaya,
-  FeedbackModal,
-  NavigationControls,
-  TelaBase,
-} from "./base";
+import { AudioButton, FeedbackModal, NavigationControls, TelaBase } from "./base";
 import { InvestigationTools, MultipleChoice } from "./atividades";
 import { FonteEclipseA, FonteEclipseB } from "./fontes";
 
@@ -84,9 +78,7 @@ export function TelaDuelo3Decisao() {
 
   const confirmar = () => {
     const valido =
-      fonte[0] === "B" &&
-      pistas.length >= 2 &&
-      pistas.every((p) => corretas.includes(p));
+      fonte[0] === "B" && pistas.length >= 2 && pistas.every((p) => corretas.includes(p));
     setFeedback(valido ? "acerto" : "erro");
   };
 
@@ -125,10 +117,6 @@ export function TelaDuelo3Decisao() {
           aoSelecionar={alternar}
           colunas={2}
         />
-      </div>
-
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-1 right-2 h-[104px]">
-        <CharacterMaya pose="tablet" />
       </div>
 
       <FeedbackModal

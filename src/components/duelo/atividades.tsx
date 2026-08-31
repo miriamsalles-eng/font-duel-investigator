@@ -6,7 +6,9 @@ import { cn } from "@/lib/utils";
 export function ClueCard({
   texto,
   selecionado,
+  ligado,
   revisar,
+  nota,
   onClick,
   className,
   arrastavel,
@@ -14,9 +16,14 @@ export function ClueCard({
   descricao,
 }: {
   texto: string;
+  /** Item ativo aguardando o par (estado momentâneo de escolha). */
   selecionado?: boolean;
+  /** Item já respondido — continua totalmente editável. */
+  ligado?: boolean;
   /** Marcação discreta de "reveja esta relação" (não entrega a resposta). */
   revisar?: boolean;
+  /** Texto auxiliar visível (ex.: par escolhido). */
+  nota?: string;
   onClick?: () => void;
   className?: string;
   arrastavel?: boolean;
@@ -27,14 +34,19 @@ export function ClueCard({
     <>
       <span>{texto}</span>
       {descricao ? <span className="sr-only"> — {descricao}</span> : null}
+      {nota ? (
+        <span className="mt-1 block text-[13px] font-semibold leading-tight text-teal-escuro">
+          {nota}
+        </span>
+      ) : null}
     </>
   );
   const classes = cn(
     "min-h-11 w-full rounded-xl border-2 px-3 py-2.5 text-left text-[15px] font-semibold leading-snug transition-colors",
-    selecionado
-      ? "border-roxo bg-roxo/12 text-grafite"
-      : "border-cinza-azulado/35 bg-card text-grafite hover:border-azul",
-    revisar && "border-dashed border-amarelo bg-amarelo/15",
+    "border-cinza-azulado/35 bg-card text-grafite hover:border-azul",
+    ligado && "border-teal bg-teal-claro/40",
+    selecionado && "border-roxo bg-roxo/12 ring-2 ring-roxo/30",
+    revisar && "border-dashed border-amarelo bg-amarelo/20",
     className,
   );
 
@@ -142,11 +154,33 @@ export function MatchColumnsActivity({
   /** IDs da coluna A que precisam ser revistos após uma confirmação incorreta. */
   revisar?: string[];
 }) {
-  const [selecionadoA, setSelecionadoA] = React.useState<string | null>(null);
+  const [ativoA, setAtivoA] = React.useState<string | null>(null);
+  const [ativoB, setAtivoB] = React.useState<string | null>(null);
   const embaralhadoB = React.useMemo(
     () => [pares[2], pares[0], pares[1]].filter((p): p is (typeof pares)[number] => Boolean(p)),
     [pares],
   );
+
+  /** Sempre editável: escolher A e B (em qualquer ordem) refaz a ligação. */
+  const escolherA = (idA: string) => {
+    if (ativoB) {
+      aoLigar(idA, ativoB);
+      setAtivoA(null);
+      setAtivoB(null);
+      return;
+    }
+    setAtivoA(ativoA === idA ? null : idA);
+  };
+
+  const escolherB = (idB: string) => {
+    if (ativoA) {
+      aoLigar(ativoA, idB);
+      setAtivoA(null);
+      setAtivoB(null);
+      return;
+    }
+    setAtivoB(ativoB === idB ? null : idB);
+  };
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-3">
@@ -155,24 +189,28 @@ export function MatchColumnsActivity({
           Coluna A — Informação
         </h3>
         {pares.map((p) => {
-          const ligado = !!ligacoes[p.id];
           const destino = pares.find((x) => x.id === ligacoes[p.id]);
           return (
             <ClueCard
               key={p.id}
               texto={p.colunaA}
-              selecionado={selecionadoA === p.id || ligado}
+              selecionado={ativoA === p.id}
+              ligado={!!destino}
               revisar={revisar.includes(p.id)}
-              {...(destino ? { descricao: `ligada a ${destino.colunaB}` } : {})}
-              onClick={() => setSelecionadoA(selecionadoA === p.id ? null : p.id)}
+              {...(destino
+                ? { nota: `→ ${destino.colunaB}`, descricao: `ligada a ${destino.colunaB}` }
+                : {})}
+              onClick={() => escolherA(p.id)}
             />
           );
         })}
       </div>
-      <div className="self-center text-center text-[13px] font-bold uppercase text-cinza-azulado">
-        <span aria-hidden="true">→</span>
-        <p className="mt-1 max-w-[92px] text-[12px] leading-tight">
-          Escolha à esquerda e depois à direita
+      <div className="self-center text-center text-[13px] font-bold text-cinza-azulado">
+        <span aria-hidden="true" className="text-[18px]">
+          →
+        </span>
+        <p className="mt-1 w-[150px] text-[13px] font-semibold leading-snug">
+          Escolha um item de cada coluna. Pode trocar quando quiser.
         </p>
       </div>
       <div className="space-y-2.5">
@@ -185,13 +223,10 @@ export function MatchColumnsActivity({
             <ClueCard
               key={p.id}
               texto={p.colunaB}
-              selecionado={usada}
-              onClick={() => {
-                if (!selecionadoA) return;
-                aoLigar(selecionadoA, p.id);
-                setSelecionadoA(null);
-              }}
-              {...(usada ? { descricao: "já ligada" } : {})}
+              selecionado={ativoB === p.id}
+              ligado={usada}
+              onClick={() => escolherB(p.id)}
+              {...(usada ? { descricao: "já ligada — pode ser trocada" } : {})}
             />
           );
         })}
@@ -255,7 +290,9 @@ export function DragDropActivity({
         </div>
       </div>
 
-      <div className={cn("grid min-h-0 gap-3", destinos.length > 2 ? "grid-cols-3" : "grid-cols-2")}>
+      <div
+        className={cn("grid min-h-0 gap-3", destinos.length > 2 ? "grid-cols-3" : "grid-cols-2")}
+      >
         {destinos.map((d) => (
           <div
             key={d.id}

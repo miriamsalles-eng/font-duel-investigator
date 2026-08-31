@@ -297,7 +297,6 @@ export function ProgressKit({ compacto = false }: { compacto?: boolean }) {
   );
 }
 
-
 export function useConquistarKit(itens: CriterioId[]) {
   const { dispatch } = useDuelo();
   const chave = itens.join("|");
@@ -319,6 +318,7 @@ export function FeedbackModal({
   rotuloFechar = "ENTENDI",
   aoFechar,
   acaoSecundaria,
+  maya = "apontando",
 }: {
   aberto: boolean;
   titulo: string;
@@ -327,6 +327,8 @@ export function FeedbackModal({
   rotuloFechar?: string;
   aoFechar: () => void;
   acaoSecundaria?: { rotulo: string; aoClicar: () => void };
+  /** Maya volta com presença média no feedback (Tipo D). */
+  maya?: PoseMaya | false;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -367,16 +369,25 @@ export function FeedbackModal({
         }}
         className="w-full max-w-[720px] rounded-[26px] border border-azul/20 bg-[#FDFBF6] p-6 shadow-[0_26px_60px_-24px_rgba(47,52,64,0.6)]"
       >
-        <h2
-          id="titulo-feedback"
-          className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado"
-        >
-          {titulo}
-        </h2>
-        <div className="mt-3 space-y-2 text-[16px] leading-snug text-grafite">
-          {paragrafos.map((p) => (
-            <p key={p}>{p}</p>
-          ))}
+        <div className="flex items-start gap-4">
+          {maya ? (
+            <div aria-hidden="true" className="h-[170px] shrink-0 self-end">
+              <CharacterMaya pose={maya} />
+            </div>
+          ) : null}
+          <div className="min-w-0 flex-1">
+            <h2
+              id="titulo-feedback"
+              className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado"
+            >
+              {titulo}
+            </h2>
+            <div className="mt-3 space-y-2 text-[16px] leading-snug text-grafite">
+              {paragrafos.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
+            </div>
+          </div>
         </div>
         {destaque?.length ? (
           <div className="mt-4 rounded-2xl border-2 border-amarelo bg-amarelo/15 p-3">
@@ -478,10 +489,8 @@ export function TelaBase({
         {kit ? <ProgressKit compacto /> : null}
       </header>
 
-
       <div className="relative min-h-0 flex-1">{children}</div>
       <footer className="relative">{rodape}</footer>
     </div>
   );
 }
-

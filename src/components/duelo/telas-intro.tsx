@@ -1,4 +1,5 @@
 import * as React from "react";
+import { cn } from "@/lib/utils";
 import {
   DECORATIVOS,
   AUDIO,
@@ -21,8 +22,14 @@ import {
 import { MatchColumnsActivity } from "./atividades";
 
 const DECOR_INTRO = [
-  { src: DECORATIVOS.fitaTeal, className: "left-[-18px] top-[86px] w-[110px] -rotate-6 opacity-80" },
-  { src: DECORATIVOS.clipeAzul, className: "right-[16px] bottom-[92px] w-[46px] rotate-12 opacity-80" },
+  {
+    src: DECORATIVOS.fitaTeal,
+    className: "left-[-18px] top-[86px] w-[110px] -rotate-6 opacity-80",
+  },
+  {
+    src: DECORATIVOS.clipeAzul,
+    className: "right-[16px] bottom-[92px] w-[46px] rotate-12 opacity-80",
+  },
   { src: DECORATIVOS.pontinhoAmarelo, className: "left-[46%] bottom-[10px] w-[22px] opacity-70" },
 ];
 
@@ -149,9 +156,14 @@ export function TelaOQueEFonte() {
       }
     >
       <div className="flex h-full min-h-0 flex-col gap-3">
-        <p className="rounded-2xl border-2 border-amarelo bg-amarelo/15 px-4 py-2 text-[16px] font-bold text-grafite">
-          {LIGAR_COLUNAS.definicao}
-        </p>
+        <div className="rounded-2xl border-2 border-amarelo bg-[#FFFCF3] px-5 py-3 shadow-[0_6px_16px_-12px_rgba(47,52,64,0.5)]">
+          <p className="text-[13px] font-extrabold uppercase tracking-widest text-teal-escuro">
+            Conceito
+          </p>
+          <p className="text-[18px] font-bold leading-snug text-grafite">
+            {LIGAR_COLUNAS.definicao}
+          </p>
+        </div>
         <div className="flex items-center gap-3">
           <p className="text-[18px] font-extrabold leading-snug text-grafite">
             {LIGAR_COLUNAS.comando}
@@ -164,10 +176,6 @@ export function TelaOQueEFonte() {
           aoLigar={ligar}
           revisar={revisar}
         />
-      </div>
-
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-2 right-3 h-[120px]">
-        <CharacterMaya pose="apontando" />
       </div>
 
       <FeedbackModal
@@ -214,27 +222,33 @@ export function TelaLupa() {
         />
       }
     >
-      <div className="flex h-full min-h-0 flex-col gap-2">
+      <div className="flex h-full min-h-0 flex-col gap-3">
         <div className="flex items-center gap-3">
           <p className="text-[17px] font-extrabold leading-snug text-grafite">{FALA_LUPA}</p>
           <AudioButton src={AUDIO.lupa} rotulo="Ouvir a explicação de Maya" />
         </div>
-        <ul className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(260px,1fr))] content-start gap-2.5">
-          {CRITERIOS.map((c) => (
+        <ul className="grid flex-1 grid-cols-8 content-start gap-3">
+          {CRITERIOS.map((c, i) => (
             <li
               key={c.id}
-              className="rounded-2xl border-2 border-cinza-azulado/35 bg-card px-4 py-2.5"
+              className={cn(
+                "col-span-2 rounded-2xl border-2 border-cinza-azulado/35 bg-[#FDFBF6] px-4 py-3 shadow-[0_6px_16px_-14px_rgba(47,52,64,0.5)]",
+                i === 4 && "col-start-4",
+              )}
             >
-              <p className="text-[16px] font-extrabold uppercase tracking-wide text-azul">
+              <p className="text-[15px] font-extrabold uppercase tracking-wide text-azul">
                 {c.titulo}
               </p>
-              <p className="mt-0.5 text-[16px] leading-snug text-grafite">{c.perguntaLupa}</p>
+              <p className="mt-1 text-[15px] leading-snug text-grafite">{c.perguntaLupa}</p>
             </li>
           ))}
         </ul>
       </div>
 
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-2 right-3 h-[130px]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-[68px] right-4 h-[200px]"
+      >
         <CharacterMaya pose="tablet" />
       </div>
     </TelaBase>

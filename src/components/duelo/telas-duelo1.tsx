@@ -1,18 +1,15 @@
 import * as React from "react";
 import { DECORATIVOS, FUNDOS, AUDIO, DUELO1 } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
-import {
-  AudioButton,
-  CharacterMaya,
-  FeedbackModal,
-  NavigationControls,
-  TelaBase,
-} from "./base";
+import { AudioButton, FeedbackModal, NavigationControls, TelaBase } from "./base";
 import { MultipleChoice } from "./atividades";
 import { FonteFeiraA, FonteFeiraB } from "./fontes";
 
 const DECOR_D1 = [
-  { src: DECORATIVOS.clipeAmarelo, className: "left-[-14px] top-[130px] w-[44px] -rotate-12 opacity-80" },
+  {
+    src: DECORATIVOS.clipeAmarelo,
+    className: "left-[-14px] top-[130px] w-[44px] -rotate-12 opacity-80",
+  },
   { src: DECORATIVOS.iconeCalendario, className: "right-[18px] bottom-[74px] w-[42px] opacity-60" },
 ];
 
@@ -141,10 +138,6 @@ export function TelaDuelo1Decisao() {
           aoSelecionar={alternar}
           colunas={2}
         />
-      </div>
-
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-1 right-2 h-[110px]">
-        <CharacterMaya pose="apontandoAcima" />
       </div>
 
       <FeedbackModal
