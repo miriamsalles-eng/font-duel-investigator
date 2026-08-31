@@ -1,19 +1,19 @@
 import * as React from "react";
 import { AUDIO, DECORATIVOS, DUELO2, FUNDOS, PISTA_MAGICA } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
-import {
-  AudioButton,
-  CharacterMaya,
-  FeedbackModal,
-  NavigationControls,
-  TelaBase,
-} from "./base";
+import { AudioButton, FeedbackModal, NavigationControls, TelaBase } from "./base";
 import { InvestigationTools, MultipleChoice } from "./atividades";
 import { FonteMorcegoA, FonteMorcegoB } from "./fontes";
 
 const DECOR_D2 = [
-  { src: DECORATIVOS.clipeTeal, className: "left-[-14px] top-[140px] w-[44px] -rotate-6 opacity-80" },
-  { src: DECORATIVOS.iconeCartasPergunta, className: "right-[16px] bottom-[76px] w-[44px] opacity-60" },
+  {
+    src: DECORATIVOS.clipeTeal,
+    className: "left-[-14px] top-[140px] w-[44px] -rotate-6 opacity-80",
+  },
+  {
+    src: DECORATIVOS.iconeCartasPergunta,
+    className: "right-[16px] bottom-[76px] w-[44px] opacity-60",
+  },
 ];
 
 /* ---------------- Duelo 2 — investigação compartilhada ---------------- */
@@ -73,9 +73,9 @@ export function TelaDuelo2Decisao() {
   const { dispatch } = useDuelo();
   const [fonte, setFonte] = useAtividade<string[]>("d2-escolha", []);
   const [pistas, setPistas] = useAtividade<string[]>("d2-pistas", []);
-  const [feedback, setFeedback] = React.useState<null | "fonteA" | "aparencia" | "poucas" | "acerto">(
-    null,
-  );
+  const [feedback, setFeedback] = React.useState<
+    null | "fonteA" | "aparencia" | "poucas" | "acerto"
+  >(null);
 
   const corretas = DUELO2.decisao.opcoes.filter((o) => o.correta).map((o) => o.id);
   const pronto = fonte.length === 1 && pistas.length > 0;
@@ -131,10 +131,6 @@ export function TelaDuelo2Decisao() {
           aoSelecionar={alternar}
           colunas={2}
         />
-      </div>
-
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-1 right-2 h-[110px]">
-        <CharacterMaya pose="apontando" />
       </div>
 
       <FeedbackModal
