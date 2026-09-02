@@ -260,10 +260,11 @@ export function TelaLupa() {
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-[68px] right-4 h-[200px]"
+        className="pointer-events-none absolute bottom-[10px] right-2 h-[150px]"
       >
         <CharacterMaya pose="tablet" />
       </div>
+
     </TelaBase>
   );
 }
