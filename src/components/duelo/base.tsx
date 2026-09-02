@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useDuelo } from "@/lib/duelo/estado";
 import { CORES_CRITERIO, KIT_ITENS, MAYA } from "@/lib/duelo/conteudo";
+import { falar, pararFala, prepararVozes } from "@/lib/duelo/fala";
 import type { CriterioId } from "@/lib/duelo/conteudo";
 
 /* ------------------------- Palco 1200 × 675 ------------------------- */
@@ -104,43 +105,73 @@ export function SpeechBubble({
       />
 
       <div className="flex items-start gap-3">
-        <div className="flex-1 space-y-2 text-[16px] leading-snug text-grafite">{children}</div>
-        {audio ? <AudioButton src={audio} rotulo="Ouvir a fala de Maya" /> : null}
+        <div data-fala className="flex-1 space-y-2 text-[16px] leading-snug text-grafite">
+          {children}
+        </div>
+        {audio !== undefined ? <AudioButton rotulo="Ouvir a fala de Maya" /> : null}
       </div>
     </div>
   );
 }
 
-/* ------------------------- Áudio ------------------------- */
+/* ------------------------- Áudio nativo (speechSynthesis) ------------------------- */
 
-export function AudioButton({ src, rotulo }: { src: string; rotulo: string }) {
+export function AudioButton({
+  rotulo,
+  texto,
+  src: _src,
+}: {
+  rotulo: string;
+  texto?: string;
+  /** Mantido por compatibilidade; o áudio agora é sintetizado pelo navegador. */
+  src?: string;
+}) {
   const { estado, dispatch } = useDuelo();
-  const ref = React.useRef<HTMLAudioElement | null>(null);
+  const ref = React.useRef<HTMLDivElement | null>(null);
   const [tocando, setTocando] = React.useState(false);
   const [indisponivel, setIndisponivel] = React.useState(false);
 
-  const alternar = () => {
+  React.useEffect(() => {
+    prepararVozes();
+    return () => pararFala();
+  }, []);
+
+  const textoAlvo = () => {
+    if (texto) return texto;
     const el = ref.current;
-    if (!el) return;
+    if (!el) return "";
+    const alvo =
+      el.closest("[data-fala]") ??
+      el.parentElement?.querySelector("[data-fala]") ??
+      el.parentElement?.parentElement?.querySelector("[data-fala]") ??
+      el.parentElement?.parentElement;
+    if (!alvo) return "";
+    const clone = alvo.cloneNode(true) as HTMLElement;
+    clone.querySelectorAll("button, .sr-only").forEach((n) => n.remove());
+    return clone.textContent ?? "";
+  };
+
+  const alternar = () => {
     if (tocando) {
-      el.pause();
+      pararFala();
       setTocando(false);
       return;
     }
-    void el.play().then(
-      () => setTocando(true),
-      () => setIndisponivel(true),
-    );
+    if (!estado.audioLigado) return;
+    const ok = falar(textoAlvo(), () => setTocando(false));
+    if (ok) setTocando(true);
+    else setIndisponivel(true);
   };
 
   return (
-    <div className="flex shrink-0 items-center gap-1">
+    <div ref={ref} className="flex shrink-0 items-center gap-1">
       <button
         type="button"
         onClick={alternar}
-        aria-label={indisponivel ? `${rotulo} (áudio ainda não disponível)` : rotulo}
-        title={indisponivel ? "Áudio ainda não disponível" : rotulo}
-        className="grid h-11 w-11 place-items-center rounded-full border-2 border-azul/30 bg-azul-claro text-azul transition-colors hover:bg-azul hover:text-primary-foreground"
+        disabled={!estado.audioLigado}
+        aria-label={indisponivel ? `${rotulo} (áudio indisponível neste dispositivo)` : rotulo}
+        title={indisponivel ? "Áudio indisponível neste dispositivo" : rotulo}
+        className="grid h-11 w-11 place-items-center rounded-full border-2 border-azul/30 bg-azul-claro text-azul transition-colors hover:bg-azul hover:text-primary-foreground disabled:opacity-45"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="currentColor">
           <path d="M4 9v6h4l5 4V5L8 9H4Z" />
@@ -163,19 +194,13 @@ export function AudioButton({ src, rotulo }: { src: string; rotulo: string }) {
           )}
         </svg>
       </button>
-      <audio
-        ref={ref}
-        src={src}
-        preload="none"
-        muted={!estado.audioLigado}
-        onEnded={() => setTocando(false)}
-        onError={() => setIndisponivel(true)}
-      >
-        <track kind="captions" />
-      </audio>
       <button
         type="button"
-        onClick={() => dispatch({ tipo: "audio" })}
+        onClick={() => {
+          pararFala();
+          setTocando(false);
+          dispatch({ tipo: "audio" });
+        }}
         aria-pressed={!estado.audioLigado}
         aria-label={estado.audioLigado ? "Desativar som" : "Ativar som"}
         className="rounded-md px-1 py-1 text-[10px] font-bold uppercase tracking-wide text-cinza-azulado hover:text-azul"
@@ -185,6 +210,7 @@ export function AudioButton({ src, rotulo }: { src: string; rotulo: string }) {
     </div>
   );
 }
+
 
 /* ------------------------- Botões ------------------------- */
 
@@ -367,30 +393,35 @@ export function FeedbackModal({
             primeiro.focus();
           }
         }}
-        className="w-full max-w-[720px] rounded-[26px] border border-azul/20 bg-[#FDFBF6] p-6 shadow-[0_26px_60px_-24px_rgba(47,52,64,0.6)]"
+        className="w-full max-w-[700px] rounded-[24px] border border-azul/20 bg-[#FDFBF6] px-5 py-4 shadow-[0_26px_60px_-24px_rgba(47,52,64,0.6)]"
       >
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-3">
           {maya ? (
-            <div aria-hidden="true" className="h-[170px] shrink-0 self-end">
+            <div aria-hidden="true" className="h-[135px] shrink-0 self-end">
               <CharacterMaya pose={maya} />
             </div>
           ) : null}
           <div className="min-w-0 flex-1">
-            <h2
-              id="titulo-feedback"
-              className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado"
-            >
-              {titulo}
-            </h2>
-            <div className="mt-3 space-y-2 text-[16px] leading-snug text-grafite">
-              {paragrafos.map((p) => (
-                <p key={p}>{p}</p>
-              ))}
+            <div className="flex items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <h2
+                  id="titulo-feedback"
+                  className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado"
+                >
+                  {titulo}
+                </h2>
+                <div data-fala className="mt-1.5 space-y-1.5 text-[16px] leading-snug text-grafite">
+                  {paragrafos.map((p) => (
+                    <p key={p}>{p}</p>
+                  ))}
+                </div>
+              </div>
+              <AudioButton rotulo="Ouvir este feedback" />
             </div>
           </div>
         </div>
         {destaque?.length ? (
-          <div className="mt-4 rounded-2xl border-2 border-amarelo bg-amarelo/15 p-3">
+          <div className="mt-3 rounded-2xl border-2 border-amarelo bg-amarelo/15 px-3 py-2">
             {destaque.map((d) => (
               <p key={d} className="text-sm font-extrabold uppercase leading-snug text-grafite">
                 {d}
@@ -398,7 +429,7 @@ export function FeedbackModal({
             ))}
           </div>
         ) : null}
-        <div className="mt-5 flex flex-wrap justify-end gap-3">
+        <div className="mt-3 flex flex-wrap justify-end gap-3">
           {acaoSecundaria ? (
             <InvestigationButton tom="contorno" onClick={acaoSecundaria.aoClicar}>
               {acaoSecundaria.rotulo}
@@ -408,6 +439,7 @@ export function FeedbackModal({
             {rotuloFechar}
           </InvestigationButton>
         </div>
+
       </div>
     </div>
   );
