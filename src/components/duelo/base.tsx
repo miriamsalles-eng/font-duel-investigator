@@ -393,30 +393,35 @@ export function FeedbackModal({
             primeiro.focus();
           }
         }}
-        className="w-full max-w-[720px] rounded-[26px] border border-azul/20 bg-[#FDFBF6] p-6 shadow-[0_26px_60px_-24px_rgba(47,52,64,0.6)]"
+        className="w-full max-w-[700px] rounded-[24px] border border-azul/20 bg-[#FDFBF6] px-5 py-4 shadow-[0_26px_60px_-24px_rgba(47,52,64,0.6)]"
       >
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-3">
           {maya ? (
-            <div aria-hidden="true" className="h-[170px] shrink-0 self-end">
+            <div aria-hidden="true" className="h-[135px] shrink-0 self-end">
               <CharacterMaya pose={maya} />
             </div>
           ) : null}
           <div className="min-w-0 flex-1">
-            <h2
-              id="titulo-feedback"
-              className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado"
-            >
-              {titulo}
-            </h2>
-            <div className="mt-3 space-y-2 text-[16px] leading-snug text-grafite">
-              {paragrafos.map((p) => (
-                <p key={p}>{p}</p>
-              ))}
+            <div className="flex items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <h2
+                  id="titulo-feedback"
+                  className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado"
+                >
+                  {titulo}
+                </h2>
+                <div data-fala className="mt-1.5 space-y-1.5 text-[16px] leading-snug text-grafite">
+                  {paragrafos.map((p) => (
+                    <p key={p}>{p}</p>
+                  ))}
+                </div>
+              </div>
+              <AudioButton rotulo="Ouvir este feedback" />
             </div>
           </div>
         </div>
         {destaque?.length ? (
-          <div className="mt-4 rounded-2xl border-2 border-amarelo bg-amarelo/15 p-3">
+          <div className="mt-3 rounded-2xl border-2 border-amarelo bg-amarelo/15 px-3 py-2">
             {destaque.map((d) => (
               <p key={d} className="text-sm font-extrabold uppercase leading-snug text-grafite">
                 {d}
@@ -424,7 +429,7 @@ export function FeedbackModal({
             ))}
           </div>
         ) : null}
-        <div className="mt-5 flex flex-wrap justify-end gap-3">
+        <div className="mt-3 flex flex-wrap justify-end gap-3">
           {acaoSecundaria ? (
             <InvestigationButton tom="contorno" onClick={acaoSecundaria.aoClicar}>
               {acaoSecundaria.rotulo}
@@ -434,6 +439,7 @@ export function FeedbackModal({
             {rotuloFechar}
           </InvestigationButton>
         </div>
+
       </div>
     </div>
   );
