@@ -104,43 +104,73 @@ export function SpeechBubble({
       />
 
       <div className="flex items-start gap-3">
-        <div className="flex-1 space-y-2 text-[16px] leading-snug text-grafite">{children}</div>
-        {audio ? <AudioButton src={audio} rotulo="Ouvir a fala de Maya" /> : null}
+        <div data-fala className="flex-1 space-y-2 text-[16px] leading-snug text-grafite">
+          {children}
+        </div>
+        {audio !== undefined ? <AudioButton rotulo="Ouvir a fala de Maya" /> : null}
       </div>
     </div>
   );
 }
 
-/* ------------------------- Áudio ------------------------- */
+/* ------------------------- Áudio nativo (speechSynthesis) ------------------------- */
 
-export function AudioButton({ src, rotulo }: { src: string; rotulo: string }) {
+export function AudioButton({
+  rotulo,
+  texto,
+  src: _src,
+}: {
+  rotulo: string;
+  texto?: string;
+  /** Mantido por compatibilidade; o áudio agora é sintetizado pelo navegador. */
+  src?: string;
+}) {
   const { estado, dispatch } = useDuelo();
-  const ref = React.useRef<HTMLAudioElement | null>(null);
+  const ref = React.useRef<HTMLDivElement | null>(null);
   const [tocando, setTocando] = React.useState(false);
   const [indisponivel, setIndisponivel] = React.useState(false);
 
-  const alternar = () => {
+  React.useEffect(() => {
+    prepararVozes();
+    return () => pararFala();
+  }, []);
+
+  const textoAlvo = () => {
+    if (texto) return texto;
     const el = ref.current;
-    if (!el) return;
+    if (!el) return "";
+    const alvo =
+      el.closest("[data-fala]") ??
+      el.parentElement?.querySelector("[data-fala]") ??
+      el.parentElement?.parentElement?.querySelector("[data-fala]") ??
+      el.parentElement?.parentElement;
+    if (!alvo) return "";
+    const clone = alvo.cloneNode(true) as HTMLElement;
+    clone.querySelectorAll("button, .sr-only").forEach((n) => n.remove());
+    return clone.textContent ?? "";
+  };
+
+  const alternar = () => {
     if (tocando) {
-      el.pause();
+      pararFala();
       setTocando(false);
       return;
     }
-    void el.play().then(
-      () => setTocando(true),
-      () => setIndisponivel(true),
-    );
+    if (!estado.audioLigado) return;
+    const ok = falar(textoAlvo(), () => setTocando(false));
+    if (ok) setTocando(true);
+    else setIndisponivel(true);
   };
 
   return (
-    <div className="flex shrink-0 items-center gap-1">
+    <div ref={ref} className="flex shrink-0 items-center gap-1">
       <button
         type="button"
         onClick={alternar}
-        aria-label={indisponivel ? `${rotulo} (áudio ainda não disponível)` : rotulo}
-        title={indisponivel ? "Áudio ainda não disponível" : rotulo}
-        className="grid h-11 w-11 place-items-center rounded-full border-2 border-azul/30 bg-azul-claro text-azul transition-colors hover:bg-azul hover:text-primary-foreground"
+        disabled={!estado.audioLigado}
+        aria-label={indisponivel ? `${rotulo} (áudio indisponível neste dispositivo)` : rotulo}
+        title={indisponivel ? "Áudio indisponível neste dispositivo" : rotulo}
+        className="grid h-11 w-11 place-items-center rounded-full border-2 border-azul/30 bg-azul-claro text-azul transition-colors hover:bg-azul hover:text-primary-foreground disabled:opacity-45"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="currentColor">
           <path d="M4 9v6h4l5 4V5L8 9H4Z" />
@@ -163,19 +193,13 @@ export function AudioButton({ src, rotulo }: { src: string; rotulo: string }) {
           )}
         </svg>
       </button>
-      <audio
-        ref={ref}
-        src={src}
-        preload="none"
-        muted={!estado.audioLigado}
-        onEnded={() => setTocando(false)}
-        onError={() => setIndisponivel(true)}
-      >
-        <track kind="captions" />
-      </audio>
       <button
         type="button"
-        onClick={() => dispatch({ tipo: "audio" })}
+        onClick={() => {
+          pararFala();
+          setTocando(false);
+          dispatch({ tipo: "audio" });
+        }}
         aria-pressed={!estado.audioLigado}
         aria-label={estado.audioLigado ? "Desativar som" : "Ativar som"}
         className="rounded-md px-1 py-1 text-[10px] font-bold uppercase tracking-wide text-cinza-azulado hover:text-azul"
@@ -185,6 +209,7 @@ export function AudioButton({ src, rotulo }: { src: string; rotulo: string }) {
     </div>
   );
 }
+
 
 /* ------------------------- Botões ------------------------- */
 
