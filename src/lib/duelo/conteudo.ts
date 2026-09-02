@@ -43,6 +43,51 @@ export const CRITERIOS: {
   },
 ];
 
+/**
+ * Identidade cromática de cada pista do Kit. A MESMA cor acompanha o critério
+ * na Lupa, nos chips do Kit e durante os duelos (memória visual).
+ */
+export const CORES_CRITERIO: Record<
+  CriterioId,
+  { card: string; titulo: string; chip: string; chipVazio: string; icone: string }
+> = {
+  quem: {
+    card: "border-azul/60 bg-azul-claro/35",
+    titulo: "text-azul-escuro",
+    chip: "border-azul bg-azul-claro text-azul-escuro",
+    chipVazio: "border-dashed border-azul/40 text-azul-escuro/70",
+    icone: "/assets/interface/icones_investigacao/icone_perfil_autoria.png",
+  },
+  quando: {
+    card: "border-amarelo bg-amarelo-claro/60",
+    titulo: "text-amarelo-escuro",
+    chip: "border-amarelo bg-amarelo-claro text-amarelo-escuro",
+    chipVazio: "border-dashed border-amarelo/60 text-amarelo-escuro/70",
+    icone: "/assets/interface/icones_investigacao/icone_calendario.png",
+  },
+  origem: {
+    card: "border-teal/60 bg-teal-claro/40",
+    titulo: "text-teal-escuro",
+    chip: "border-teal bg-teal-claro text-teal-escuro",
+    chipVazio: "border-dashed border-teal/40 text-teal-escuro/70",
+    icone: "/assets/interface/icones_investigacao/icone_globo_origem.png",
+  },
+  confirmam: {
+    card: "border-roxo/60 bg-roxo-claro/50",
+    titulo: "text-roxo-escuro",
+    chip: "border-roxo bg-roxo-claro text-roxo-escuro",
+    chipVazio: "border-dashed border-roxo/40 text-roxo-escuro/70",
+    icone: "/assets/interface/icones_investigacao/icone_balanca_comparacao.png",
+  },
+  situacao: {
+    card: "border-coral/60 bg-coral-claro/45",
+    titulo: "text-coral-escuro",
+    chip: "border-coral bg-coral-claro text-coral-escuro",
+    chipVazio: "border-dashed border-coral/40 text-coral-escuro/70",
+    icone: "/assets/interface/icones_investigacao/icone_mapa_localizacao.png",
+  },
+};
+
 /** Nomes dos itens do Kit do Investigador de Fontes (seção 37). */
 export const KIT_ITENS: { id: CriterioId; rotulo: string }[] = [
   { id: "quem", rotulo: "QUEM?" },
@@ -51,6 +96,7 @@ export const KIT_ITENS: { id: CriterioId; rotulo: string }[] = [
   { id: "confirmam", rotulo: "OUTROS CONFIRMAM?" },
   { id: "situacao", rotulo: "SERVE PARA ESTA SITUAÇÃO?" },
 ];
+
 
 /** Placeholders de áudio — arquivos MP3 serão enviados depois (seção 38). */
 export const AUDIO = {
@@ -153,22 +199,26 @@ export type OpcaoJustificativa = { id: string; texto: string; correta: boolean }
 
 export const DUELO1 = {
   situacao:
-    "Maya precisa descobrir a data da Feira de Ciências para escrever uma notícia.",
+    "Precisamos confirmar as informações sobre a Feira de Ciências da escola. Qual fonte pode nos ajudar melhor?",
   fala: "Quero contar quando acontecerá a Feira de Ciências da escola. Encontrei duas informações diferentes.",
   comando:
-    "Observe as duas fontes. Vamos procurar duas pistas importantes: quando a informação foi publicada e quem publicou.",
+    "Leia as duas fontes com atenção. Vamos procurar juntos duas pistas dentro dos cards.",
   guiadas: [
     {
-      id: "quando",
-      enunciado: "Qual fonte informa quando a informação foi publicada?",
+      id: "quem",
+      criterio: "quem" as CriterioId,
+      enunciado:
+        "Procure quem é responsável pelo que foi publicado. Em qual card você encontrou?",
       esperada: "B",
     },
     {
-      id: "quem",
-      enunciado: "Qual fonte deixa claro quem publicou a informação?",
+      id: "quando",
+      criterio: "quando" as CriterioId,
+      enunciado: "Agora procure quando a informação foi publicada. Em qual card ela aparece?",
       esperada: "B",
     },
   ],
+
   feedbackErroGuiada: "Procure essa informação dentro dos dois cards e tente novamente.",
   feedbackAparencia:
     "A aparência pode chamar atenção, mas precisamos de pistas sobre autoria, data e adequação.",
@@ -268,7 +318,7 @@ export const DUELO3 = {
     pergunta:
       "Qual fonte você usaria para responder à pergunta sobre esta sexta-feira e esta cidade?",
     opcoesFonte: [
-      { id: "A", texto: "Fonte A — Céu e Estrelas" },
+      { id: "A", texto: "Fonte A — Ciência e Céu" },
       { id: "B", texto: "Fonte B — Observatório da Cidade" },
     ],
     perguntaPistas: "Escolha as pistas que justificam sua decisão.",
@@ -276,7 +326,7 @@ export const DUELO3 = {
       { id: "data-atual", texto: "Foi publicada nesta semana.", correta: true },
       { id: "local", texto: "Fala especificamente da nossa cidade.", correta: true },
       { id: "adequacao", texto: "Informa a visibilidade do eclipse para esta cidade.", correta: true },
-      { id: "calendario", texto: "Apresenta um calendário astronômico atual.", correta: true },
+      { id: "calendario", texto: "Informa o horário previsto para a observação nesta sexta-feira.", correta: true },
       { id: "aparencia", texto: "Tem aparência profissional.", correta: false },
       { id: "antiga", texto: "Foi publicada em 2023.", correta: false },
       { id: "outra-regiao", texto: "Conta sobre um eclipse observado em outra região.", correta: false },

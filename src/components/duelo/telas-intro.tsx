@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import {
   DECORATIVOS,
   AUDIO,
+  CORES_CRITERIO,
   CRITERIOS,
   FALA_LUPA,
   FUNDOS,
@@ -228,21 +229,33 @@ export function TelaLupa() {
           <AudioButton src={AUDIO.lupa} rotulo="Ouvir a explicação de Maya" />
         </div>
         <ul className="grid flex-1 grid-cols-8 content-start gap-3">
-          {CRITERIOS.map((c, i) => (
-            <li
-              key={c.id}
-              className={cn(
-                "col-span-2 rounded-2xl border-2 border-cinza-azulado/35 bg-[#FDFBF6] px-4 py-3 shadow-[0_6px_16px_-14px_rgba(47,52,64,0.5)]",
-                i === 4 && "col-start-4",
-              )}
-            >
-              <p className="text-[15px] font-extrabold uppercase tracking-wide text-azul">
-                {c.titulo}
-              </p>
-              <p className="mt-1 text-[15px] leading-snug text-grafite">{c.perguntaLupa}</p>
-            </li>
-          ))}
+          {CRITERIOS.map((c, i) => {
+            const cor = CORES_CRITERIO[c.id];
+            return (
+              <li
+                key={c.id}
+                className={cn(
+                  "col-span-2 rounded-2xl border-2 bg-card px-3.5 py-3 shadow-[0_6px_16px_-14px_rgba(47,52,64,0.5)]",
+                  cor.card,
+                  i === 4 && "col-start-4",
+                )}
+              >
+                <img
+                  src={cor.icone}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="h-8 w-8 select-none object-contain"
+                />
+                <p className={cn("mt-1 text-[15px] font-extrabold uppercase tracking-wide", cor.titulo)}>
+                  {c.titulo}
+                </p>
+                <p className="mt-1 text-[15px] leading-snug text-grafite">{c.perguntaLupa}</p>
+              </li>
+            );
+          })}
         </ul>
+
       </div>
 
       <div
