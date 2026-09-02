@@ -3,15 +3,88 @@ import { cn } from "@/lib/utils";
 
 /**
  * SourceCard — recorte de uma página fictícia da Internet.
- * As duas fontes de cada duelo têm o MESMO nível de acabamento gráfico:
- * a aparência nunca antecipa a resposta. A confiabilidade precisa ser
- * descoberta lendo o conteúdo.
+ * Cada gênero digital (postagem, comunicado, blog, artigo, boletim) tem uma
+ * VARIANTE do mesmo componente: muda cabeçalho, organização e detalhes,
+ * mas o acabamento gráfico é equivalente. A aparência nunca antecipa a
+ * resposta — a confiabilidade precisa ser descoberta lendo o conteúdo.
+ *
+ * Quando uma informação não existe na fonte, o campo simplesmente NÃO aparece.
  */
+
+export type VarianteFonte =
+  | "postagem"
+  | "comunicado"
+  | "curiosidades"
+  | "artigo-educativo"
+  | "divulgacao"
+  | "boletim";
+
+type Tom = {
+  faixa: string;
+  borda: string;
+  chip: string;
+  marca: string;
+  titulo: string;
+  logo: string;
+};
+
+const TONS: Record<VarianteFonte, Tom> = {
+  postagem: {
+    faixa: "bg-azul-claro",
+    borda: "border-azul/45",
+    chip: "bg-card text-azul-escuro border-azul/40",
+    marca: "text-azul-escuro",
+    titulo: "text-grafite",
+    logo: "bg-azul text-card",
+  },
+  comunicado: {
+    faixa: "bg-teal-claro",
+    borda: "border-teal/50",
+    chip: "bg-card text-teal-escuro border-teal/45",
+    marca: "text-teal-escuro",
+    titulo: "text-grafite",
+    logo: "bg-teal text-card",
+  },
+  curiosidades: {
+    faixa: "bg-coral-claro",
+    borda: "border-coral/50",
+    chip: "bg-card text-coral-escuro border-coral/45",
+    marca: "text-coral-escuro",
+    titulo: "text-grafite",
+    logo: "bg-coral text-card",
+  },
+  "artigo-educativo": {
+    faixa: "bg-verde-claro",
+    borda: "border-verde/55",
+    chip: "bg-card text-verde-escuro border-verde/50",
+    marca: "text-verde-escuro",
+    titulo: "text-grafite",
+    logo: "bg-verde text-card",
+  },
+  divulgacao: {
+    faixa: "bg-roxo-claro",
+    borda: "border-roxo/45",
+    chip: "bg-card text-roxo-escuro border-roxo/40",
+    marca: "text-roxo-escuro",
+    titulo: "text-grafite",
+    logo: "bg-roxo text-card",
+  },
+  boletim: {
+    faixa: "bg-amarelo-claro",
+    borda: "border-amarelo",
+    chip: "bg-card text-amarelo-escuro border-amarelo",
+    marca: "text-amarelo-escuro",
+    titulo: "text-grafite",
+    logo: "bg-amarelo text-grafite",
+  },
+};
+
 export function SourceCard({
   rotulo,
-  site,
+  variante,
   marca,
   sigla,
+  tipo,
   titulo,
   children,
   selecionada,
@@ -20,11 +93,13 @@ export function SourceCard({
   id,
 }: {
   rotulo: "FONTE A" | "FONTE B";
-  site: string;
+  variante: VarianteFonte;
   /** Nome do site/instituição exibido no cabeçalho da página. */
   marca: string;
   /** Iniciais neutras no "logo" da página. */
   sigla: string;
+  /** Rótulo discreto do gênero (Postagem, Comunicado oficial…). */
+  tipo: string;
   titulo: string;
   children: React.ReactNode;
   selecionada?: boolean;
@@ -32,181 +107,264 @@ export function SourceCard({
   onClick?: () => void;
   id?: string;
 }) {
+  const t = TONS[variante];
   const Elemento = onClick ? "button" : "div";
+  const redonda = variante === "postagem" || variante === "curiosidades";
+
   return (
     <Elemento
       id={id}
       {...(onClick ? { type: "button" as const, onClick, "aria-pressed": !!selecionada } : {})}
       className={cn(
-        "flex w-full min-w-0 flex-col overflow-hidden rounded-[18px] border-2 bg-[#FDFCF8] text-left shadow-[0_12px_26px_-16px_rgba(47,52,64,0.55)] transition-colors",
-        selecionada ? "border-roxo ring-4 ring-roxo/25" : "border-cinza-azulado/25",
+        "flex w-full min-w-0 flex-col overflow-hidden rounded-[18px] border-2 bg-card text-left shadow-[0_12px_26px_-16px_rgba(47,52,64,0.5)] transition-colors",
+        selecionada ? "border-roxo ring-4 ring-roxo/25" : t.borda,
         onClick && "hover:border-azul",
         className,
       )}
     >
-      <div className="flex items-center gap-2 border-b border-cinza-azulado/20 bg-muted px-3 py-1">
-        <span aria-hidden="true" className="flex gap-1">
-          <span className="h-2 w-2 rounded-full bg-cinza-azulado/40" />
-          <span className="h-2 w-2 rounded-full bg-cinza-azulado/40" />
-          <span className="h-2 w-2 rounded-full bg-cinza-azulado/40" />
-        </span>
-        <span className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado">
-          {rotulo}
-        </span>
-        <span className="ml-auto truncate rounded-full bg-card px-2 py-0.5 text-[13px] font-semibold text-cinza-azulado">
-          {site}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-2 border-b border-cinza-azulado/20 bg-card px-3 py-1">
+      <div className={cn("flex items-center gap-2 px-3 py-1.5", t.faixa)}>
         <span
           aria-hidden="true"
-          className="grid h-7 w-7 shrink-0 place-items-center rounded-md border border-cinza-azulado/30 bg-muted text-[12px] font-extrabold text-cinza-azulado"
+          className={cn(
+            "grid h-7 w-7 shrink-0 place-items-center text-[12px] font-black",
+            redonda ? "rounded-full" : "rounded-md",
+            t.logo,
+          )}
         >
           {sigla}
         </span>
-        <span className="truncate text-[14px] font-extrabold uppercase tracking-wide text-grafite">
-          {marca}
+        <span className={cn("min-w-0 truncate text-[15px] font-extrabold", t.marca)}>{marca}</span>
+        <span
+          className={cn(
+            "ml-auto shrink-0 rounded-full border px-2 py-0.5 text-[13px] font-bold",
+            t.chip,
+          )}
+        >
+          {tipo}
         </span>
       </div>
 
-      <div className="flex flex-col gap-1 px-3 py-2.5">
-        <h3 className="text-[17px] font-extrabold leading-tight text-grafite">{titulo}</h3>
-        <div className="space-y-1 text-[15px] leading-snug text-cinza-azulado">{children}</div>
+      <div className="flex items-center gap-2 border-b border-cinza-azulado/15 px-3 py-1">
+        <span className="text-[13px] font-extrabold uppercase tracking-widest text-cinza-azulado">
+          {rotulo}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-1.5 px-3.5 py-2.5">
+        <h3 className={cn("text-[17px] font-extrabold leading-tight", t.titulo)}>{titulo}</h3>
+        <div className="space-y-1.5 text-[15px] leading-snug text-grafite">{children}</div>
       </div>
     </Elemento>
   );
 }
 
+/** Bloco organizado de metadados (só aparece quando a informação existe). */
+export function BlocoMeta({
+  linhas,
+  variante = "postagem",
+}: {
+  linhas: { rotulo: string; valor: string }[];
+  variante?: VarianteFonte;
+}) {
+  const t = TONS[variante];
+  return (
+    <dl className={cn("mt-0.5 rounded-xl px-3 py-2 text-[14px] leading-snug", t.faixa)}>
+      {linhas.map((l) => (
+        <div key={l.rotulo} className="flex flex-wrap gap-x-1.5">
+          <dt className="font-extrabold text-grafite">{l.rotulo}:</dt>
+          <dd className="min-w-0 text-grafite">{l.valor}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 export function LinhaMeta({ rotulo, valor }: { rotulo: string; valor: string }) {
   return (
-    <p>
-      <span className="font-bold text-grafite">{rotulo}:</span> {valor}
+    <p className="text-[14px]">
+      <span className="font-extrabold text-grafite">{rotulo}:</span> {valor}
     </p>
   );
 }
 
+/** Ícones discretos de interação — meramente visuais, como em uma postagem real. */
+function IconesPostagem() {
+  return (
+    <p
+      aria-hidden="true"
+      className="mt-0.5 flex items-center gap-3 border-t border-cinza-azulado/15 pt-1 text-[13px] font-bold text-cinza-azulado"
+    >
+      <span>curtir</span>
+      <span>comentar</span>
+      <span>compartilhar</span>
+    </p>
+  );
+}
+
+type PropsFonte = Partial<React.ComponentProps<typeof SourceCard>>;
+
 /* ---------------- Duelo 1 — Feira de Ciências ---------------- */
 
-export function FonteFeiraA(props: Partial<React.ComponentProps<typeof SourceCard>>) {
+export function FonteFeiraA(props: PropsFonte) {
   return (
     <SourceCard
       rotulo="FONTE A"
-      site="mural-de-avisos.com/feira"
-      marca="Mural de Avisos"
-      sigla="MA"
-      titulo="Feira de Ciências será na sexta-feira!"
+      variante="postagem"
+      marca="Mural da Comunidade"
+      sigla="MC"
+      tipo="Postagem"
+      titulo="Vai ter Feira de Ciências!"
       {...props}
     >
       <p>
-        A feira vai ter experimentos, maquetes e apresentações das turmas. Não esqueça de levar seu
-        crachá!
+        Pessoal, vai ter Feira de Ciências na escola! As turmas estão preparando várias atividades
+        legais. Quem quiser aparecer, será bem-vindo!
       </p>
-      <LinhaMeta rotulo="Publicado em" valor="—" />
-      <LinhaMeta rotulo="Publicado por" valor="—" />
-      <p className="italic">Compartilhe com os colegas.</p>
+      <IconesPostagem />
     </SourceCard>
   );
 }
 
-export function FonteFeiraB(props: Partial<React.ComponentProps<typeof SourceCard>>) {
+export function FonteFeiraB(props: PropsFonte) {
   return (
     <SourceCard
       rotulo="FONTE B"
-      site="escolahorizonte.edu.exemplo/comunicados"
+      variante="comunicado"
       marca="Escola Horizonte"
       sigla="EH"
+      tipo="Comunicado oficial"
       titulo="Feira de Ciências 2026"
       {...props}
     >
-      <LinhaMeta rotulo="Data do evento" valor="28 de setembro" />
-      <LinhaMeta rotulo="Horário" valor="9h às 16h, na quadra da escola" />
+      <BlocoMeta
+        variante="comunicado"
+        linhas={[
+          { rotulo: "Data do evento", valor: "28 de setembro" },
+          { rotulo: "Horário", valor: "9h às 16h" },
+          { rotulo: "Local", valor: "Quadra da escola" },
+        ]}
+      />
       <LinhaMeta rotulo="Publicado em" valor="12 de agosto de 2026" />
-      <LinhaMeta rotulo="Publicado por" valor="Coordenação Pedagógica da Escola Horizonte" />
+      <LinhaMeta
+        rotulo="Publicado por"
+        valor="Coordenação Pedagógica da Escola Horizonte"
+      />
     </SourceCard>
   );
 }
 
 /* ---------------- Duelo 2 — Morcegos ---------------- */
 
-export function FonteMorcegoA(props: Partial<React.ComponentProps<typeof SourceCard>>) {
+export function FonteMorcegoA(props: PropsFonte) {
   return (
     <SourceCard
       rotulo="FONTE A"
-      site="curiosidadessuperincriveis.exemplo"
+      variante="curiosidades"
       marca="Curiosidades Superincríveis"
       sigla="CS"
+      tipo="Blog de curiosidades"
       titulo="Morcegos são totalmente cegos!"
       {...props}
     >
-      <p>“Todo mundo sabe que morcegos não enxergam.”</p>
-      <LinhaMeta rotulo="Publicado por" valor="—" />
-      <LinhaMeta rotulo="Publicado em" valor="—" />
-      <LinhaMeta rotulo="Referências" valor="—" />
+      <p>
+        Todo mundo sabe que morcegos não enxergam. Eles vivem no escuro e por isso precisam usar os
+        ouvidos para não bater nas coisas.
+      </p>
+      <p className="font-bold text-coral-escuro">Compartilhe essa curiosidade com seus amigos!</p>
+      <IconesPostagem />
     </SourceCard>
   );
 }
 
-export function FonteMorcegoB(props: Partial<React.ComponentProps<typeof SourceCard>>) {
+export function FonteMorcegoB(props: PropsFonte) {
   return (
     <SourceCard
       rotulo="FONTE B"
-      site="museudavidaanimal.exemplo/artigos"
+      variante="artigo-educativo"
       marca="Museu da Vida Animal"
       sigla="MV"
+      tipo="Artigo educativo"
       titulo="Como os morcegos percebem o ambiente?"
       {...props}
     >
       <p>
-        “Morcegos utilizam diferentes sentidos para se orientar. Muitas espécies também enxergam.”
+        Morcegos utilizam diferentes sentidos para perceber o ambiente. Muitas espécies enxergam e
+        também utilizam a ecolocalização, emitindo sons e percebendo seus ecos para se orientar.
       </p>
-      <LinhaMeta rotulo="Autora" valor="Bióloga do Museu da Vida Animal" />
-      <LinhaMeta rotulo="Publicado em" valor="4 de março de 2026" />
-      <LinhaMeta rotulo="Referências" valor="estudos sobre ecolocalização e visão em morcegos" />
+      <BlocoMeta
+        variante="artigo-educativo"
+        linhas={[
+          { rotulo: "Autora", valor: "Marina Lopes, bióloga do Museu da Vida Animal" },
+          { rotulo: "Publicado em", valor: "4 de março de 2026" },
+          {
+            rotulo: "Fontes consultadas",
+            valor: "Estudos sobre visão e ecolocalização em morcegos",
+          },
+        ]}
+      />
     </SourceCard>
   );
 }
 
 /* ---------------- Duelo 3 — Eclipse ---------------- */
 
-export function FonteEclipseA(props: Partial<React.ComponentProps<typeof SourceCard>>) {
+export function FonteEclipseA(props: PropsFonte) {
   return (
     <SourceCard
       rotulo="FONTE A"
-      site="ceueestrelas.exemplo/eclipses"
-      marca="Céu e Estrelas"
-      sigla="CE"
-      titulo="Eclipse encanta observadores"
+      variante="divulgacao"
+      marca="Ciência e Céu"
+      sigla="CC"
+      tipo="Divulgação científica"
+      titulo="Como observar um eclipse solar com segurança"
       {...props}
     >
       <p>
-        O eclipse foi acompanhado por muitas pessoas em outra região do país, com céu limpo durante
-        toda a observação.
+        Os eclipses solares acontecem quando a Lua passa entre a Terra e o Sol. Para observar o
+        fenômeno, é necessário utilizar proteção adequada para os olhos.
       </p>
-      <LinhaMeta rotulo="Autor" valor="Redator de astronomia do site" />
-      <LinhaMeta rotulo="Publicado em" valor="2023" />
-      <LinhaMeta rotulo="Região citada" valor="outra região, distante da nossa cidade" />
+      <p>
+        O eclipse de 14 de outubro de 2023 pôde ser observado em diferentes regiões do Brasil.
+      </p>
+      <BlocoMeta
+        variante="divulgacao"
+        linhas={[
+          { rotulo: "Autora", valor: "Ana Martins, divulgadora científica" },
+          { rotulo: "Publicado em", valor: "10 de outubro de 2023" },
+          { rotulo: "Fontes", valor: "Instituições de pesquisa em astronomia" },
+        ]}
+      />
     </SourceCard>
   );
 }
 
-export function FonteEclipseB(props: Partial<React.ComponentProps<typeof SourceCard>>) {
+export function FonteEclipseB(props: PropsFonte) {
   return (
     <SourceCard
       rotulo="FONTE B"
-      site="observatoriodacidade.exemplo/calendario"
+      variante="boletim"
       marca="Observatório da Cidade"
       sigla="OC"
-      titulo="Calendário astronômico desta semana"
+      tipo="Boletim de observação"
+      titulo="Eclipse desta sexta-feira: haverá visibilidade na cidade?"
       {...props}
     >
       <p>
-        O calendário indica quais fenômenos poderão ser observados nesta semana e informa a
-        visibilidade do eclipse na nossa cidade.
+        O eclipse previsto para sexta-feira, 18 de setembro de 2026, poderá ser observado
+        parcialmente em nossa cidade entre 15h22 e 16h08, se as condições do céu permitirem.
       </p>
-      <LinhaMeta rotulo="Publicado em" valor="esta semana" />
-      <LinhaMeta rotulo="Local" valor="nossa cidade, com referência geográfica" />
-      <LinhaMeta rotulo="Equipe" valor="Observatório da Cidade" />
+      <p className="font-bold">
+        Nunca observe o Sol diretamente. Utilize somente equipamentos adequados para observação
+        solar.
+      </p>
+      <BlocoMeta
+        variante="boletim"
+        linhas={[
+          { rotulo: "Publicado em", valor: "15 de setembro de 2026" },
+          { rotulo: "Publicado por", valor: "Equipe do Observatório da Cidade" },
+          { rotulo: "Dados astronômicos", valor: "Boletim de observação atualizado" },
+        ]}
+      />
     </SourceCard>
   );
 }

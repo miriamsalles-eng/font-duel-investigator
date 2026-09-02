@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useDuelo } from "@/lib/duelo/estado";
-import { KIT_ITENS, MAYA } from "@/lib/duelo/conteudo";
+import { CORES_CRITERIO, KIT_ITENS, MAYA } from "@/lib/duelo/conteudo";
 import type { CriterioId } from "@/lib/duelo/conteudo";
 
 /* ------------------------- Palco 1200 × 675 ------------------------- */
@@ -265,22 +265,21 @@ export function ProgressKit({ compacto = false }: { compacto?: boolean }) {
   return (
     <section
       aria-label="Kit do Investigador de Fontes"
-      className="max-w-[380px] rounded-2xl border-2 border-amarelo/60 bg-[#FDFBF6]/95 px-3 py-2 shadow-[0_8px_18px_-14px_rgba(47,52,64,0.5)]"
+      className="max-w-[400px] rounded-2xl border-2 border-azul/40 bg-[rgba(255,252,246,0.95)] px-3 py-2 shadow-[0_8px_18px_-14px_rgba(47,52,64,0.5)]"
     >
-      <h2 className="text-[12px] font-extrabold uppercase tracking-widest text-cinza-azulado">
+      <h2 className="text-[13px] font-extrabold uppercase tracking-widest text-azul-escuro">
         Kit do Investigador de Fontes
       </h2>
       <ul className="mt-1 flex flex-wrap items-center gap-1.5">
         {KIT_ITENS.map((item) => {
           const conquistado = estado.kit.includes(item.id);
+          const cor = CORES_CRITERIO[item.id];
           return (
             <li key={item.id}>
               <span
                 className={cn(
-                  "inline-flex items-center gap-1 rounded-full border-2 px-2 py-1 text-[12px] font-bold uppercase tracking-wide",
-                  conquistado
-                    ? "border-roxo bg-roxo/12 text-roxo"
-                    : "border-dashed border-cinza-azulado/40 text-cinza-azulado/70",
+                  "inline-flex items-center gap-1 rounded-full border-2 px-2 py-1 text-[13px] font-bold uppercase tracking-wide",
+                  conquistado ? cor.chip : cor.chipVazio,
                 )}
               >
                 <span aria-hidden="true">{conquistado ? "★" : "○"}</span>
@@ -296,6 +295,7 @@ export function ProgressKit({ compacto = false }: { compacto?: boolean }) {
     </section>
   );
 }
+
 
 export function useConquistarKit(itens: CriterioId[]) {
   const { dispatch } = useDuelo();
@@ -470,13 +470,13 @@ export function TelaBase({
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[rgba(247,244,238,0.62)]"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,253,248,0.74),rgba(217,236,255,0.66)_55%,rgba(205,236,217,0.6))]"
           />
         </>
       ) : null}
       <DecorativeLayer assets={decoracoes} />
       <header className="relative flex items-start justify-between gap-4">
-        <div className="inline-block min-w-0 max-w-[64%] rounded-2xl border border-azul/15 bg-[rgba(255,252,246,0.93)] px-3.5 py-1.5 shadow-[0_3px_10px_rgba(47,52,64,0.14)]">
+        <div className="inline-block min-w-0 max-w-[64%] rounded-2xl border-2 border-azul/25 border-l-[6px] border-l-amarelo bg-[rgba(255,252,246,0.95)] px-3.5 py-1.5 shadow-[0_3px_10px_rgba(47,52,64,0.14)]">
           {etapa ? (
             <p className="text-[13px] font-extrabold uppercase tracking-widest text-teal-escuro">
               {etapa}
@@ -486,6 +486,7 @@ export function TelaBase({
             {titulo}
           </h1>
         </div>
+
         {kit ? <ProgressKit compacto /> : null}
       </header>
 

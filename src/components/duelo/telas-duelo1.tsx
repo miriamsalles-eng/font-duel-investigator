@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DECORATIVOS, FUNDOS, AUDIO, DUELO1 } from "@/lib/duelo/conteudo";
+import { DECORATIVOS, FUNDOS, AUDIO, CORES_CRITERIO, DUELO1 } from "@/lib/duelo/conteudo";
 import { useAtividade, useDuelo } from "@/lib/duelo/estado";
 import { AudioButton, FeedbackModal, NavigationControls, TelaBase } from "./base";
 import { MultipleChoice } from "./atividades";
@@ -52,7 +52,7 @@ export function TelaDuelo1Investigacao() {
         />
       }
     >
-      <div className="flex h-full min-h-0 flex-col gap-2.5">
+      <div className="flex h-full min-h-0 flex-col gap-2">
         <div className="flex items-start gap-3">
           <p className="text-[17px] font-extrabold leading-snug text-grafite">{DUELO1.comando}</p>
           <AudioButton src={AUDIO.duelo1Investigacao} rotulo="Ouvir o comando da investigação" />
@@ -64,19 +64,27 @@ export function TelaDuelo1Investigacao() {
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-3">
-          {DUELO1.guiadas.map((g) => (
-            <MultipleChoice
-              key={g.id}
-              enunciado={g.enunciado}
-              opcoes={OPCOES_FONTE}
-              selecionadas={respostas[g.id] ? [respostas[g.id]!] : []}
-              aoSelecionar={(id) => {
-                setRespostas({ ...respostas, [g.id]: id });
-              }}
-              colunas={2}
-            />
-          ))}
+          {DUELO1.guiadas.map((g) => {
+            const cor = CORES_CRITERIO[g.criterio];
+            return (
+              <div
+                key={g.id}
+                className={`rounded-2xl border-2 bg-card/85 px-3 py-2 ${cor.card}`}
+              >
+                <MultipleChoice
+                  enunciado={g.enunciado}
+                  opcoes={OPCOES_FONTE}
+                  selecionadas={respostas[g.id] ? [respostas[g.id]!] : []}
+                  aoSelecionar={(id) => {
+                    setRespostas({ ...respostas, [g.id]: id });
+                  }}
+                  colunas={2}
+                />
+              </div>
+            );
+          })}
         </div>
+
       </div>
 
       <FeedbackModal

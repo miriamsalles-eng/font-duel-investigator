@@ -12,6 +12,7 @@
  */
 @theme inline {
   --color-areia: var(--areia);
+  --color-creme: var(--creme);
   --color-azul: var(--azul);
   --color-azul-claro: var(--azul-claro);
   --color-azul-escuro: var(--azul-escuro);
@@ -20,8 +21,17 @@
   --color-teal-escuro: var(--teal-escuro);
 
   --color-amarelo: var(--amarelo);
+  --color-amarelo-claro: var(--amarelo-claro);
+  --color-amarelo-escuro: var(--amarelo-escuro);
   --color-coral: var(--coral);
+  --color-coral-claro: var(--coral-claro);
+  --color-coral-escuro: var(--coral-escuro);
   --color-roxo: var(--roxo);
+  --color-roxo-claro: var(--roxo-claro);
+  --color-roxo-escuro: var(--roxo-escuro);
+  --color-verde: var(--verde);
+  --color-verde-claro: var(--verde-claro);
+  --color-verde-escuro: var(--verde-escuro);
   --color-cinza-azulado: var(--cinza-azulado);
   --color-grafite: var(--grafite);
   --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
@@ -29,19 +39,30 @@
 
 :root {
   --areia: oklch(0.965 0.008 85);
-  --azul: oklch(0.62 0.11 253);
-  --azul-claro: oklch(0.93 0.03 253);
-  --azul-escuro: oklch(0.47 0.11 253);
-  --teal: oklch(0.635 0.077 187);
-  --teal-claro: oklch(0.94 0.025 187);
-  --teal-escuro: oklch(0.5 0.075 187);
+  --creme: oklch(0.975 0.022 88);
+  --azul: oklch(0.6 0.128 258);
+  --azul-claro: oklch(0.925 0.043 255);
+  --azul-escuro: oklch(0.45 0.13 258);
+  --teal: oklch(0.7 0.093 187);
+  --teal-claro: oklch(0.93 0.045 175);
+  --teal-escuro: oklch(0.5 0.083 187);
 
-  --amarelo: oklch(0.845 0.135 88);
-  --coral: oklch(0.7 0.115 30);
-  --roxo: oklch(0.635 0.105 294);
+  --amarelo: oklch(0.885 0.13 88);
+  --amarelo-claro: oklch(0.965 0.05 92);
+  --amarelo-escuro: oklch(0.55 0.1 78);
+  --coral: oklch(0.75 0.135 32);
+  --coral-claro: oklch(0.94 0.045 32);
+  --coral-escuro: oklch(0.53 0.14 32);
+  --roxo: oklch(0.7 0.115 293);
+  --roxo-claro: oklch(0.945 0.035 293);
+  --roxo-escuro: oklch(0.5 0.14 293);
+  --verde: oklch(0.78 0.1 155);
+  --verde-claro: oklch(0.94 0.045 155);
+  --verde-escuro: oklch(0.5 0.1 155);
   --cinza-azulado: oklch(0.51 0.03 250);
-  --grafite: oklch(0.31 0.02 265);
+  --grafite: oklch(0.33 0.025 258);
 }
+
 
 
 /*
