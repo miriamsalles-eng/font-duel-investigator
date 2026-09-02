@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useDuelo } from "@/lib/duelo/estado";
 import { CORES_CRITERIO, KIT_ITENS, MAYA } from "@/lib/duelo/conteudo";
+import { falar, pararFala, prepararVozes } from "@/lib/duelo/fala";
 import type { CriterioId } from "@/lib/duelo/conteudo";
 
 /* ------------------------- Palco 1200 × 675 ------------------------- */
