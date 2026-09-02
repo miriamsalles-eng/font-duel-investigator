@@ -16,7 +16,7 @@ import {
   FeedbackModal,
   InvestigationButton,
   NavigationControls,
-  ProgressKit,
+  
   SpeechBubble,
   TelaBase,
   useConquistarKit,
