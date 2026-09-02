@@ -259,8 +259,8 @@ export function TelaEncerramento() {
         />
       }
     >
-      <div className="grid h-full grid-cols-[1fr_300px] items-center gap-6">
-        <div className="space-y-3">
+      <div className="grid h-full grid-cols-[1fr_320px] items-center gap-6">
+        <div className="space-y-4">
           <SpeechBubble audio={AUDIO.encerramento}>
             {ENCERRAMENTO.falas.map((f) => (
               <p key={f} className="text-[17px]">
@@ -268,33 +268,31 @@ export function TelaEncerramento() {
               </p>
             ))}
           </SpeechBubble>
-          <div className="rounded-2xl border-2 border-amarelo bg-amarelo/15 p-4">
+          <div className="rounded-2xl border-2 border-amarelo bg-amarelo/15 px-4 py-3">
             <p className="text-2xl font-extrabold uppercase tracking-wide text-grafite">
               {ENCERRAMENTO.selo}
             </p>
             <p className="text-sm font-semibold text-cinza-azulado">{ENCERRAMENTO.complemento}</p>
-          </div>
-          <div className="rounded-2xl border-2 border-roxo/40 bg-card p-3">
-            <h2 className="text-[10px] font-extrabold uppercase tracking-widest text-cinza-azulado">
-              Estratégias reunidas no seu kit
-            </h2>
-            <ul className="mt-1 flex flex-wrap gap-1.5">
-              {KIT_ITENS.map((i) => (
-                <li
-                  key={i.id}
-                  className="rounded-full border-2 border-roxo px-2 py-1 text-[11px] font-bold uppercase text-roxo"
-                >
-                  {i.rotulo}
-                </li>
-              ))}
+            <ul className="mt-3 flex flex-wrap gap-1.5">
+              {KIT_ITENS.map((i) => {
+                const cor = CORES_CRITERIO[i.id];
+                return (
+                  <li
+                    key={i.id}
+                    className={`rounded-full border-2 px-2 py-1 text-[13px] font-bold uppercase tracking-wide ${cor.chip}`}
+                  >
+                    {i.rotulo}
+                  </li>
+                );
+              })}
             </ul>
           </div>
-          <ProgressKit compacto />
         </div>
-        <div className="h-[400px]">
+        <div className="h-[420px]">
           <CharacterMaya pose="comemorando" className="mx-auto" />
         </div>
       </div>
+
     </TelaBase>
   );
 }
